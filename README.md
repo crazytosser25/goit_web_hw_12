@@ -1,5 +1,5 @@
-# goit_web_hw_11
-Homework 11
+# goit_web_hw_12
+Homework 12 FastAPI + Authorization
 
 
 1. Дані доступу до БД, а також зовнішні хост і порт застосунку повинні
