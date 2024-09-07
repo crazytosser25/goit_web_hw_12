@@ -1,10 +1,11 @@
 """CRUD operations"""
 from datetime import datetime, timedelta
+from typing import List
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from typing import List
-import src.models as models
-import src.schemas as schemas
+
+import src.contacts.models as models
+import src.contacts.schemas as schemas
 
 
 def create_contact(
