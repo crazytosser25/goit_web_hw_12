@@ -15,7 +15,6 @@ contact_router = APIRouter(prefix='/api/contacts', tags=["contacts"])
 
 
 @contact_router.post("/", response_model=ContactScema)
-#, dependencies=[Depends(auth_s.oauth2_scheme)]
 def create_contact(
     contact: ContactCreation,
     db: Session = Depends(get_db),
@@ -35,12 +34,20 @@ def create_contact(
         db (Session, optional): The database session used to interact with
             the database. It is provided by the dependency injection system
             through Depends(get_db).
+        user (UserDb, optional): The currently authenticated user making the
+            request. This dependency is resolved using
+            Depends(auth_s.get_current_user) to ensure that the contact is
+            associated with the correct user.
 
     Returns:
         schemas.Contact: The newly created contact with all the details
             including the assigned ID.
     """
-    result =  CrudOps.create_contact(base=db, contact=contact, user=user)
+    result =  CrudOps.create_contact(
+        base=db,
+        contact=contact,
+        user=user
+    )
     return result
 
 
@@ -59,50 +66,20 @@ def read_contacts(
         db (Session, optional): The database session used to interact with
             the database.It is provided by dependency injection through
             Depends(get_db).
+        user (UserDb, optional): The currently authenticated user making the
+            request. This dependency is resolved using
+            Depends(auth_s.get_current_user) to ensure that the contact is
+            associated with the correct user.
 
     Returns:
         list[schemas.Contact]: A list of contacts, where each contact contains
             details such as first name, last name, email, phone number,
             birthday, and any additional information.
     """
-    result = CrudOps.get_all_contacts(base=db, user=user)
-    return result
-
-
-@contact_router.get("/{contact_id}", response_model=ContactScema)
-def read_contact(
-    contact_id: int,
-    db: Session = Depends(get_db),
-    user: UserDb = Depends(auth_s.get_current_user)
-) -> ContactScema:
-    """Retrieves a specific contact by its ID from the database.
-
-    This endpoint fetches the contact with the specified ID. If the contact
-    is found, it returns the contact details; otherwise, it raises an
-    HTTP 404 exception.
-
-    Args:
-        contact_id (int): The unique identifier of the contact to retrieve.
-        db (Session, optional): The database session used to interact with t
-            he database, provided by dependency injection through
-            Depends(get_db).
-
-    Raises:
-        HTTPException: If the contact with the given ID is not found, an
-            HTTP 404 exception is raised with a message indicating that
-            the contact was not found.
-
-    Returns:
-        schemas.Contact: The contact details of the specified contact ID,
-            including fields such as first name, last name, email,
-            phone number, birthday, and any additional information.
-    """
-    result = CrudOps.get_contact(base=db, id_=contact_id, user=user)
-    if result is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Contact not found"
-        )
+    result = CrudOps.get_all_contacts(
+        base=db,
+        user=user
+    )
     return result
 
 
@@ -124,13 +101,21 @@ def search_contacts(
         db (Session, optional): The database session used to interact with
             the database, provided by dependency injection through
             Depends(get_db).
+        user (UserDb, optional): The currently authenticated user making the
+            request. This dependency is resolved using
+            Depends(auth_s.get_current_user) to ensure that the contact is
+            associated with the correct user.
 
     Returns:
         List[schemas.Contact]: A list of contacts that match the search
             criteria, including details such as first name, last name, email,
             phone number, birthday, and any additional information.
     """
-    result = CrudOps.search_contacts(base=db, query=query, user=user)
+    result = CrudOps.search_contacts(
+        base=db,
+        query=query,
+        user=user
+    )
     return result
 
 
@@ -149,13 +134,65 @@ def upcoming_birthdays(
         db (Session, optional): The database session used to interact with
             the database, provided by dependency injection through
             Depends(get_db).
+        user (UserDb, optional): The currently authenticated user making the
+            request. This dependency is resolved using
+            Depends(auth_s.get_current_user) to ensure that the contact is
+            associated with the correct user.
 
     Returns:
         List[schemas.Contact]: A list of contacts with upcoming birthdays,
             including details such as first name, last name, email,
             phone number, birthday, and any additional information.
     """
-    result = CrudOps.get_upcoming_birthdays(base=db, user=user)
+    result = CrudOps.get_upcoming_birthdays(
+        base=db,
+        user=user
+    )
+    return result
+
+
+@contact_router.get("/{contact_id}", response_model=ContactScema)
+def read_contact(
+    contact_id: int,
+    db: Session = Depends(get_db),
+    user: UserDb = Depends(auth_s.get_current_user)
+) -> ContactScema:
+    """Retrieves a specific contact by its ID from the database.
+
+    This endpoint fetches the contact with the specified ID. If the contact
+    is found, it returns the contact details; otherwise, it raises an
+    HTTP 404 exception.
+
+    Args:
+        contact_id (int): The unique identifier of the contact to retrieve.
+        db (Session, optional): The database session used to interact with t
+            he database, provided by dependency injection through
+            Depends(get_db).
+        user (UserDb, optional): The currently authenticated user making the
+            request. This dependency is resolved using
+            Depends(auth_s.get_current_user) to ensure that the contact is
+            associated with the correct user.
+
+    Raises:
+        HTTPException: If the contact with the given ID is not found, an
+            HTTP 404 exception is raised with a message indicating that
+            the contact was not found.
+
+    Returns:
+        schemas.Contact: The contact details of the specified contact ID,
+            including fields such as first name, last name, email,
+            phone number, birthday, and any additional information.
+    """
+    result = CrudOps.get_contact(
+        base=db,
+        id_=contact_id,
+        user=user
+    )
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Contact not found"
+        )
     return result
 
 
@@ -181,6 +218,10 @@ def update_contact(
         db (Session, optional): The database session used to interact with
             the database, provided by dependency injection through
             Depends(get_db).
+        user (UserDb, optional): The currently authenticated user making the
+            request. This dependency is resolved using
+            Depends(auth_s.get_current_user) to ensure that the contact is
+            associated with the correct user.
 
     Raises:
         HTTPException: If the contact with the given ID is not found, an
@@ -197,6 +238,7 @@ def update_contact(
         contact=contact,
         user=user
     )
+
     if result is None:
         raise HTTPException(
             status_code=404,
@@ -221,6 +263,10 @@ def delete_contact(
         contact_id (int): The unique identifier of the contact to be deleted.
         db (Session, optional): The database session used to interact with the
             database, provided by dependency injection through Depends(get_db).
+        user (UserDb, optional): The currently authenticated user making the
+            request. This dependency is resolved using
+            Depends(auth_s.get_current_user) to ensure that the contact is
+            associated with the correct user.
 
     Raises:
         HTTPException: If the contact with the given ID is not found, an
@@ -231,7 +277,12 @@ def delete_contact(
         dict: A dictionary containing a message indicating that the contact was
             successfully deleted.
     """
-    contact = CrudOps.delete_contact(base=db, id_=contact_id, user=user)
+    contact = CrudOps.delete_contact(
+        base=db,
+        id_=contact_id,
+        user=user
+    )
+
     if contact is None:
         raise HTTPException(
             status_code=404,

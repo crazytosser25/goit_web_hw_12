@@ -30,6 +30,8 @@ class CrudOps:
             contact (schemas.ContactCreation): The data required to create a new
                 contact, including fields such as first name, last name, email,
                 phone number, birthday, and any additional information.
+            user (UserDb): The currently authenticated user who is creating the contact.
+                This user will be associated with the contact.
 
         Returns:
             models.Contact: The newly created contact record from the database,
@@ -108,6 +110,8 @@ class CrudOps:
             base (Session): The database session used to interact with the database.
             query (str): The search term used to filter contacts. It will be
                 matched against the contact's first name, last name, and email fields.
+            user (UserDb): The currently authenticated user who is creating the contact.
+                This user will be associated with the contact.
 
         Returns:
             list[models.Contact]: A list of contact objects that match the search
@@ -142,6 +146,8 @@ class CrudOps:
         Args:
             base (Session): The database session used to query and interact with
                 the database.
+            user (UserDb): The currently authenticated user who is creating the contact.
+                This user will be associated with the contact.
 
         Returns:
             List[models.Contact]: A list of contact objects with birthdays occurring in the
@@ -199,6 +205,8 @@ class CrudOps:
             contact (schemas.ContactCreation): The new data for the contact, which includes
                 fields such as first name, last name, email, phone number, birthday, and
                 any additional information.
+            user (UserDb): The currently authenticated user who is creating the contact.
+                This user will be associated with the contact.
 
         Returns:
             models.Contact: The updated contact object if the contact was found and updated.
@@ -232,6 +240,8 @@ class CrudOps:
         Args:
             base (Session): The database session used to interact with the database.
             id_ (int): The unique identifier of the contact to be deleted.
+            user (UserDb): The currently authenticated user who is creating the contact.
+                This user will be associated with the contact.
 
         Returns:
             models.Contact: The deleted contact object if it was found and removed.

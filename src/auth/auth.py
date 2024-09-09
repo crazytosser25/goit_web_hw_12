@@ -1,7 +1,8 @@
 """Token operations"""
+import os
 from typing import Optional
 from datetime import datetime, timedelta, timezone
-
+from dotenv import load_dotenv
 from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -10,31 +11,73 @@ from sqlalchemy.orm import Session
 
 from src.database import get_db
 from src.auth.crud import get_user_by_email
+from src.auth.models import User
 
 
 class Auth:
+    """Authentication and authorization utility class for handling user password
+    verification, token generation, and token decoding in a REST API application.
+
+    This class includes methods to hash passwords, verify passwords, create
+    access and refresh JWT tokens, decode tokens to extract user information,
+    and authenticate the current user based on the token provided.
+
+    Attributes:
+        pwd_context (CryptContext): Password hashing context using bcrypt.
+        SECRET_KEY (str): The secret key used for encoding and decoding JWT tokens.
+        ALGORITHM (str): The algorithm used for JWT encoding.
+        oauth2_scheme (OAuth2PasswordBearer): Dependency to extract the bearer token
+            from the request for protected routes.
+    """
+    load_dotenv()
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    SECRET_KEY = "secret_key"
-    ALGORITHM = "HS256"
-    # oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    ALGORITHM = os.getenv("ALGORYTHM")
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
 
-    def verify_password(self, plain_password, hashed_password):
+
+    def verify_password(self, plain_password, hashed_password) -> bool:
+        """Verify a plain password against a hashed password.
+
+        Args:
+            plain_password (str): The plain text password provided by the user.
+            hashed_password (str): The hashed password stored in the database.
+
+        Returns:
+            bool: True if the plain password matches the hashed password, False otherwise.
+        """
         return self.pwd_context.verify(plain_password, hashed_password)
 
-    def get_password_hash(self, password: str):
+    def get_password_hash(self, password: str) -> str:
+        """Hash a plain text password using bcrypt.
+
+        Args:
+            password (str): The plain text password to hash.
+
+        Returns:
+            str: The hashed version of the password.
+        """
         return self.pwd_context.hash(password)
 
-    async def create_access_token(
-        self,
-        data: dict,
-        exp_delta: Optional[float] = None
-    ):
+
+    async def create_access_token(self, data: dict, exp_delta: Optional[float] = None) -> str:
+        """Create a new JWT access token.
+
+        Args:
+            data (dict): The data to encode in the token (e.g., user's email).
+            exp_delta (Optional[float], optional): The expiration time in seconds.
+                Defaults to 15 minutes if not provided.
+
+        Returns:
+            str: The encoded JWT access token as a string.
+        """
         to_encode = data.copy()
+
         if exp_delta:
             expire = datetime.now(timezone.utc) + timedelta(seconds=exp_delta)
         else:
             expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+
         to_encode.update(
             {
                 "iat": datetime.now(timezone.utc),
@@ -49,16 +92,25 @@ class Auth:
         )
         return encoded_access_token
 
-    async def create_refresh_token(
-        self,
-        data: dict,
-        exp_delta: Optional[float] = None
-    ):
+
+    async def create_refresh_token(self, data: dict, exp_delta: Optional[float] = None) -> str:
+        """Create a new JWT refresh token.
+
+        Args:
+            data (dict): The data to encode in the token (e.g., user's email).
+            exp_delta (Optional[float], optional): The expiration time in seconds.
+                Defaults to 7 days if not provided.
+
+        Returns:
+            str: The encoded JWT refresh token as a string.
+        """
         to_encode = data.copy()
+
         if exp_delta:
             expire = datetime.now(timezone.utc) + timedelta(seconds=exp_delta)
         else:
             expire = datetime.now(timezone.utc) + timedelta(days=7)
+
         to_encode.update(
             {
                 "iat": datetime.now(timezone.utc),
@@ -73,7 +125,19 @@ class Auth:
         )
         return encoded_refresh_token
 
-    async def decode_refresh_token(self, refresh_token: str):
+
+    async def decode_refresh_token(self, refresh_token: str) -> str:
+        """Decode a refresh token and extract the user's email.
+
+        Args:
+            refresh_token (str): The refresh token to decode.
+
+        Raises:
+            HTTPException: If the token scope is invalid or if the token cannot be decoded.
+
+        Returns:
+            str: The email of the user extracted from the token.
+        """
         try:
             payload = jwt.decode(
                 refresh_token,
@@ -83,6 +147,7 @@ class Auth:
             if payload['scope'] == 'refresh_token':
                 email = payload['sub']
                 return email
+
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail='Invalid scope for token'
@@ -93,11 +158,25 @@ class Auth:
                 detail='Could not validate credentials'
             ) from e
 
+
     async def get_current_user(
         self,
         token: str = Depends(oauth2_scheme),
         db: Session = Depends(get_db)
-    ):
+    ) -> User:
+        """Retrieve the current authenticated user based on the provided access token.
+
+        Args:
+            token (str, optional): The access token extracted from the request.
+                Defaults to Depends(oauth2_scheme).
+            db (Session, optional): The database session. Defaults to Depends(get_db).
+
+        Raises:
+            HTTPException: If the token is invalid, expired, or the user cannot be found.
+
+        Returns:
+            User: The user object associated with the token.
+        """
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -105,23 +184,23 @@ class Auth:
         )
 
         try:
-            payload = jwt.decode(
-                token,
-                self.SECRET_KEY,
-                algorithms=[self.ALGORITHM]
-            )
+            payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
+
             if payload['scope'] == 'access_token':
                 email = payload["sub"]
                 if email is None:
                     raise credentials_exception
             else:
                 raise credentials_exception
+
         except JWTError as e:
             raise credentials_exception from e
 
         user = await get_user_by_email(email, db)
+
         if user is None:
             raise credentials_exception
+
         return user
 
 #  Import this to make all routers use one instanse of class
