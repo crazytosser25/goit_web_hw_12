@@ -1,5 +1,5 @@
 """Data models for DB"""
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.sql.sqltypes import DateTime
 from src.database import Base
 
@@ -31,3 +31,4 @@ class User(Base):
     password = Column(String(255), nullable=False)
     created_at = Column('created_at', DateTime)
     refresh_token = Column(String(255), nullable=True)
+    confirmed = Column(Boolean, default=False)

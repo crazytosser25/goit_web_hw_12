@@ -43,6 +43,7 @@ class UserDb(BaseModel):
     username: str
     email: EmailStr
     created_at: datetime
+    confirmed: bool
 
     class Config:
         """Tells pydantic to convert even non-dict objects to json."""
@@ -83,3 +84,7 @@ class TokenModel(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
+
+
+class RequestEmail(BaseModel):
+    email: EmailStr

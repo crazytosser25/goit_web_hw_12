@@ -126,6 +126,32 @@ class Auth:
         return encoded_refresh_token
 
 
+    def create_email_token(self, data: dict) -> str:
+        """_summary_
+
+        Args:
+            data (dict): _description_
+
+        Returns:
+            str: _description_
+        """
+        to_encode = data.copy()
+        expire = datetime.now(timezone.utc) + timedelta(days=3)
+
+        to_encode.update(
+            {
+                "iat": datetime.now(timezone.utc),
+                "exp": expire
+            }
+        )
+        mail_token = jwt.encode(
+            to_encode,
+            self.SECRET_KEY,
+            algorithm=self.ALGORITHM
+        )
+        return mail_token
+
+
     async def decode_refresh_token(self, refresh_token: str) -> str:
         """Decode a refresh token and extract the user's email.
 
@@ -202,6 +228,26 @@ class Auth:
             raise credentials_exception
 
         return user
+
+
+    async def get_email_from_token(self, token: str):
+        try:
+            print(f"Received token in get_email_from_token: {token}")
+            payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
+            email = payload["sub"]
+            if email is None:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail="Token does not contain an email"
+                )
+            return email
+        except JWTError as e:
+            print(f"JWT Error: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Invalid token for email verification"
+            ) from e
+
 
 #  Import this to make all routers use one instanse of class
 auth_service = Auth()
