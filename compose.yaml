@@ -1,5 +1,5 @@
 services:
-  hw10.db.goit.com:
+  postgres_server.com:
     container_name: postgres
     image: postgres:16.1
     environment:
@@ -9,3 +9,11 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
+
+  redis_server.com:
+    container_name: redis
+    image: redis:latest
+    environment:
+      REDIS_PORT: ${REDIS_PORT}
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}

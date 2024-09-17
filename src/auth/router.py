@@ -192,6 +192,6 @@ async def request_email(
     if user.confirmed:
         return {"message": "Your email is already confirmed"}
     if user:
-        bt.add_task(send_email, user.email, user.username, request.base_url)
+        bt.add_task(send_email, user.email, user.username, str(request.base_url))
 
     return {"message": "Check your email for confirmation."}

@@ -1,5 +1,5 @@
 # goit_web_hw_12
-Homework 12 FastAPI + Authorization
+Homework 12-13 FastAPI + Authorization + Email
 
   1.  Дані доступу до БД, а також зовнішні хост і порт застосунку, algorythm & secret key
       повинні бути прописані у файлі .env згідно зразку.

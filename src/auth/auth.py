@@ -174,11 +174,15 @@ class Auth:
                 email = payload['sub']
                 return email
 
+            print(
+                "HTTPException in 'src.auth.auth.decode_refresh_token': token is not refresh_token"
+            )
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail='Invalid scope for token'
             )
         except JWTError as e:
+            print(f"JWT Error in 'src.auth.auth.decode_refresh_token': {e}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail='Could not validate credentials'
@@ -215,11 +219,14 @@ class Auth:
             if payload['scope'] == 'access_token':
                 email = payload["sub"]
                 if email is None:
+                    print("Error in 'src.auth.auth.get_current_user': no email")
                     raise credentials_exception
             else:
+                print("Error in 'src.auth.auth.get_current_user': token is not access_token")
                 raise credentials_exception
 
         except JWTError as e:
+            print(f"JWT Error in 'src.auth.auth.get_current_user': {e}")
             raise credentials_exception from e
 
         user = await get_user_by_email(email, db)
@@ -231,18 +238,25 @@ class Auth:
 
 
     async def get_email_from_token(self, token: str):
+        """_summary_
+
+        Args:
+            token (str): _description_
+
+        Raises:
+            HTTPException: _description_
+
+        Returns:
+            _type_: _description_
+        """
         try:
-            print(f"Received token in get_email_from_token: {token}")
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
             email = payload["sub"]
-            if email is None:
-                raise HTTPException(
-                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                    detail="Token does not contain an email"
-                )
+
             return email
+
         except JWTError as e:
-            print(f"JWT Error: {e}")
+            print(f"JWT Error in 'src.auth.auth.get_email_from_token': {e}")
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="Invalid token for email verification"

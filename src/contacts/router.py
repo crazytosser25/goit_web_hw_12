@@ -2,11 +2,11 @@
 from typing import List
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
-from src.database import get_db
+from fastapi_limiter.depends import RateLimiter
 
+from src.database import get_db
 from src.contacts.schemas import ContactCreation, ContactScema
 from src.contacts.crud import CrudOps
-
 from src.auth.schemas import UserDb
 from src.auth.auth import auth_service as auth_s
 
@@ -14,7 +14,11 @@ from src.auth.auth import auth_service as auth_s
 contact_router = APIRouter(prefix='/api/contacts', tags=["contacts"])
 
 
-@contact_router.post("/", response_model=ContactScema)
+@contact_router.post(
+    "/",
+    response_model=ContactScema,
+    dependencies=[Depends(RateLimiter(times=5, seconds=30))]
+)
 def create_contact(
     contact: ContactCreation,
     db: Session = Depends(get_db),
@@ -51,7 +55,11 @@ def create_contact(
     return result
 
 
-@contact_router.get("/", response_model=list[ContactScema])
+@contact_router.get(
+    "/",
+    response_model=list[ContactScema],
+    dependencies=[Depends(RateLimiter(times=5, seconds=30))]
+)
 def read_contacts(
     db: Session = Depends(get_db),
     user: UserDb = Depends(auth_s.get_current_user)
@@ -83,7 +91,11 @@ def read_contacts(
     return result
 
 
-@contact_router.get("/search/", response_model=List[ContactScema])
+@contact_router.get(
+    "/search/",
+    response_model=List[ContactScema],
+    dependencies=[Depends(RateLimiter(times=5, seconds=30))]
+)
 def search_contacts(
     query: str,
     db: Session = Depends(get_db),
@@ -119,7 +131,11 @@ def search_contacts(
     return result
 
 
-@contact_router.get("/upcoming_birthdays/", response_model=List[ContactScema])
+@contact_router.get(
+    "/upcoming_birthdays/",
+    response_model=List[ContactScema],
+    dependencies=[Depends(RateLimiter(times=5, seconds=30))]
+)
 def upcoming_birthdays(
     db: Session = Depends(get_db),
     user: UserDb = Depends(auth_s.get_current_user)
@@ -151,7 +167,11 @@ def upcoming_birthdays(
     return result
 
 
-@contact_router.get("/{contact_id}", response_model=ContactScema)
+@contact_router.get(
+    "/{contact_id}",
+    response_model=ContactScema,
+    dependencies=[Depends(RateLimiter(times=5, seconds=30))]
+)
 def read_contact(
     contact_id: int,
     db: Session = Depends(get_db),
@@ -196,7 +216,11 @@ def read_contact(
     return result
 
 
-@contact_router.put("/{contact_id}", response_model=ContactScema)
+@contact_router.put(
+    "/{contact_id}",
+    response_model=ContactScema,
+    dependencies=[Depends(RateLimiter(times=5, seconds=30))]
+)
 def update_contact(
     contact_id: int,
     contact: ContactCreation,
@@ -247,7 +271,10 @@ def update_contact(
     return result
 
 
-@contact_router.delete("/{contact_id}")
+@contact_router.delete(
+    "/{contact_id}",
+    dependencies=[Depends(RateLimiter(times=5, seconds=30))]
+)
 def delete_contact(
     contact_id: int,
     db: Session = Depends(get_db),
