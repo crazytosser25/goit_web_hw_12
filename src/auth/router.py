@@ -2,9 +2,9 @@
 from fastapi import APIRouter, HTTPException, Depends, status, Security, BackgroundTasks, Request
 from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
+from fastapi_limiter.depends import RateLimiter
 
 from src.database import get_db
-
 from src.auth.schemas import UserScema, UserResponse, TokenModel, RequestEmail
 from src.auth.crud import get_user_by_email, create_user, update_token, confirmed_check_toggle
 from src.auth.auth import auth_service as auth_s
@@ -15,7 +15,12 @@ auth_router = APIRouter(prefix='/api/auth', tags=["auth"])
 get_refr_token = HTTPBearer()
 
 
-@auth_router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@auth_router.post(
+    "/signup",
+    response_model=UserResponse,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(RateLimiter(times=5, seconds=30))]
+)
 async def signup(
     body: UserScema,
     bt: BackgroundTasks,
@@ -61,7 +66,11 @@ async def signup(
     }
 
 
-@auth_router.post("/login", response_model=TokenModel)
+@auth_router.post(
+    "/login",
+    response_model=TokenModel,
+    dependencies=[Depends(RateLimiter(times=10, seconds=300))]
+)
 async def login(
     body: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
@@ -119,7 +128,11 @@ async def login(
     }
 
 
-@auth_router.get('/refresh_token', response_model=TokenModel)
+@auth_router.get(
+    '/refresh_token',
+    response_model=TokenModel,
+    dependencies=[Depends(RateLimiter(times=5, seconds=30))]
+)
 async def refresh_token(
     credentials: HTTPAuthorizationCredentials = Security(get_refr_token),
     db: Session = Depends(get_db)
@@ -168,7 +181,10 @@ async def refresh_token(
     }
 
 
-@auth_router.get('/confirmed_email/{token}')
+@auth_router.get(
+    '/confirmed_email/{token}',
+    dependencies=[Depends(RateLimiter(times=5, seconds=30))]
+)
 async def confirmed_email(token: str, db: Session = Depends(get_db)) -> dict:
     email = await auth_s.get_email_from_token(token)
     user = await get_user_by_email(email, db)
@@ -180,7 +196,10 @@ async def confirmed_email(token: str, db: Session = Depends(get_db)) -> dict:
     return {"message": "Email confirmed"}
 
 
-@auth_router.post('/request_email')
+@auth_router.post(
+    '/request_email',
+    dependencies=[Depends(RateLimiter(times=5, seconds=30))]
+)
 async def request_email(
     body: RequestEmail,
     bt: BackgroundTasks,
