@@ -22,6 +22,7 @@ class User(Base):
         created_at (datetime): The date and time when the user was created.
         refresh_token (str, optional): The refresh token associated with the user,
             used for authentication.
+        avatar (str): Url to picture on Cloudinary
     """
     __tablename__ = "users"
 
@@ -32,3 +33,4 @@ class User(Base):
     created_at = Column('created_at', DateTime)
     refresh_token = Column(String(255), nullable=True)
     confirmed = Column(Boolean, default=False)
+    avatar = Column(String(255), nullable=True)

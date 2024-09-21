@@ -1,16 +1,26 @@
 """Router for authentification"""
-from fastapi import APIRouter, HTTPException, Depends, status, Security, BackgroundTasks, Request
+import os
+from dotenv import load_dotenv
+import cloudinary
+import cloudinary.uploader
+from fastapi import (
+    APIRouter, HTTPException, Depends, status, Security, BackgroundTasks, Request, UploadFile, File
+)
 from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 from fastapi_limiter.depends import RateLimiter
 
 from src.database import get_db
-from src.auth.schemas import UserScema, UserResponse, TokenModel, RequestEmail
-from src.auth.crud import get_user_by_email, create_user, update_token, confirmed_check_toggle
+from src.auth.models import User
+from src.auth.schemas import UserScema, UserResponse, TokenModel, RequestEmail, UserDb
+from src.auth.crud import (
+    get_user_by_email, create_user, update_token, confirmed_check_toggle, update_avatar
+)
 from src.auth.auth import auth_service as auth_s
 from src.auth.mail import send_email
 
 
+load_dotenv()
 auth_router = APIRouter(prefix='/api/auth', tags=["auth"])
 get_refr_token = HTTPBearer()
 
@@ -186,6 +196,24 @@ async def refresh_token(
     dependencies=[Depends(RateLimiter(times=5, seconds=30))]
 )
 async def confirmed_email(token: str, db: Session = Depends(get_db)) -> dict:
+    """Confirm a user's email based on the provided token.
+
+    This endpoint validates the email confirmation token, checks if the user's email is
+    already confirmed, and updates the confirmation status if necessary. It is rate-limited
+    to 5 requests every 30 seconds to prevent abuse.
+
+    Args:
+        token (str): The email confirmation token.
+        db (Session, optional): The database session dependency. Defaults to Depends(get_db).
+
+    Raises:
+        HTTPException: Raised with a 400 status code if the user is not found or if the token is invalid.
+
+    Returns:
+        dict: A dictionary containing a confirmation message. The message is either:
+            - "Email confirmed" if the confirmation was successful.
+            - "Your email is already confirmed" if the email was previously confirmed.
+    """
     email = await auth_s.get_email_from_token(token)
     user = await get_user_by_email(email, db)
     if user is None:
@@ -206,6 +234,25 @@ async def request_email(
     request: Request,
     db: Session = Depends(get_db)
 ) -> dict:
+    """Request email confirmation for a user.
+
+    This endpoint allows users to request a confirmation email if their email is not yet confirmed.
+    If the email is already confirmed, it informs the user. The confirmation email is sent
+    asynchronously using background tasks. The function is rate-limited to 5 requests every
+    30 seconds.
+
+    Args:
+        body (RequestEmail): The request body containing the user's email address.
+        bt (BackgroundTasks): A background task manager for sending the email asynchronously.
+        request (Request): The HTTP request object, used to get the base URL.
+        db (Session, optional): The database session dependency. Defaults to Depends(get_db).
+
+    Returns:
+        dict: A dictionary containing a message. The message is either:
+            - "Your email is already confirmed" if the email was previously confirmed.
+            - "Check your email for confirmation." if the confirmation email was successfully
+                requested.
+    """
     user = await get_user_by_email(body.email, db)
 
     if user.confirmed:
@@ -214,3 +261,60 @@ async def request_email(
         bt.add_task(send_email, user.email, user.username, str(request.base_url))
 
     return {"message": "Check your email for confirmation."}
+
+
+@auth_router.get("/me/", response_model=UserDb)
+async def read_users_me(current_user: User = Depends(auth_s.get_current_user)) -> UserDb:
+    """Get the current authenticated user's details.
+
+    This endpoint retrieves the information of the currently authenticated user.
+    The user's details are returned in the response model format `UserDb`.
+
+    Args:
+        current_user (User, optional): The current authenticated user.
+            It is automatically injected by the `Depends(auth_s.get_current_user)` function.
+
+    Returns:
+        UserDb: A model representing the authenticated user's details.
+    """
+    return current_user
+
+
+@auth_router.patch('/avatar', response_model=UserDb)
+async def update_avatar_user(
+    file: UploadFile = File(),
+    current_user: User = Depends(auth_s.get_current_user),
+    db: Session = Depends(get_db)
+) -> UserDb:
+    """Update the avatar of the current authenticated user.
+
+    This endpoint allows the user to upload a new avatar image, which is stored in Cloudinary.
+    The uploaded image is processed and resized, and the URL to the new avatar is saved to
+    the user's profile.
+
+    Args:
+        file (UploadFile, optional): The avatar image file to be uploaded. Defaults to File().
+            current_user (User, optional): The current authenticated user. Injected via `
+            Depends(auth_s.get_current_user)`.
+        db (Session, optional): The database session used to update the user. Defaults to `
+            Depends(get_db)`.
+
+    Returns:
+        UserDb: The updated user profile with the new avatar URL.
+    """
+    cloudinary.config(
+        cloud_name=os.getenv("CLOUDINARY_NAME"),
+        api_key=os.getenv("CLOUDINARY_API_KEY"),
+        api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+        secure=True
+    )
+
+    r = cloudinary.uploader.upload(
+        file.file,
+        public_id=f'ContactsApp/{current_user.username}',
+        overwrite=True
+    )
+    src_url = cloudinary.CloudinaryImage(f'NotesApp/{current_user.username}')\
+                        .build_url(width=250, height=250, crop='fill', version=r.get('version'))
+    user = await update_avatar(current_user.email, src_url, db)
+    return user

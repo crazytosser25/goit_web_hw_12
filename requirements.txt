@@ -1,66 +1,41 @@
-alembic==1.13.2
-annotated-types==0.7.0
-anyio==4.4.0
-bcrypt==4.0.1
-build==1.2.2
-CacheControl==0.14.0
-certifi==2024.8.30
-cffi==1.17.1
-charset-normalizer==3.3.2
-cleo==2.1.0
-click==8.1.7
-crashtest==0.4.1
-cryptography==43.0.1
-distlib==0.3.8
-dnspython==2.6.1
-dulwich==0.21.7
-ecdsa==0.19.0
-email_validator==2.2.0
-fastapi==0.112.2
-fastjsonschema==2.20.0
-filelock==3.16.0
-greenlet==3.0.3
-h11==0.14.0
-idna==3.8
-installer==0.7.0
-jaraco.classes==3.4.0
-jeepney==0.8.0
-keyring==24.3.1
-Mako==1.3.5
-MarkupSafe==2.1.5
-more-itertools==10.5.0
-msgpack==1.0.8
-packaging==24.1
-passlib==1.7.4
-pexpect==4.9.0
-pkginfo==1.11.1
-platformdirs==4.3.1
-poetry==1.8.3
-poetry-core==1.9.0
-poetry-plugin-export==1.8.0
-psycopg2-binary==2.9.9
-ptyprocess==0.7.0
-pyasn1==0.6.0
-pycparser==2.22
-pydantic==2.8.2
-pydantic_core==2.20.1
-pyproject_hooks==1.1.0
-python-dotenv==1.0.1
-python-jose==3.3.0
-python-multipart==0.0.9
-rapidfuzz==3.9.7
-requests==2.32.3
-requests-toolbelt==1.0.0
-rsa==4.9
-SecretStorage==3.3.3
-shellingham==1.5.4
-six==1.16.0
-sniffio==1.3.1
-SQLAlchemy==2.0.32
-starlette==0.38.2
-tomlkit==0.13.2
-trove-classifiers==2024.7.2
-typing_extensions==4.12.2
-urllib3==2.2.2
-uvicorn==0.30.6
-virtualenv==20.26.4
+aiosmtplib==2.0.2 ; python_version >= "3.12" and python_version < "4.0"
+alembic==1.13.2 ; python_version >= "3.12" and python_version < "4.0"
+annotated-types==0.7.0 ; python_version >= "3.12" and python_version < "4.0"
+anyio==4.4.0 ; python_version >= "3.12" and python_version < "4.0"
+bcrypt==4.0.1 ; python_version >= "3.12" and python_version < "4.0"
+blinker==1.8.2 ; python_version >= "3.12" and python_version < "4.0"
+certifi==2024.8.30 ; python_version >= "3.12" and python_version < "4.0"
+click==8.1.7 ; python_version >= "3.12" and python_version < "4.0"
+cloudinary==1.41.0 ; python_version >= "3.12" and python_version < "4.0"
+colorama==0.4.6 ; python_version >= "3.12" and python_version < "4.0" and platform_system == "Windows"
+dnspython==2.6.1 ; python_version >= "3.12" and python_version < "4.0"
+ecdsa==0.19.0 ; python_version >= "3.12" and python_version < "4.0"
+email-validator==2.2.0 ; python_version >= "3.12" and python_version < "4.0"
+fastapi-limiter==0.1.6 ; python_version >= "3.12" and python_version < "4.0"
+fastapi-mail==1.4.1 ; python_version >= "3.12" and python_version < "4.0"
+fastapi==0.112.2 ; python_version >= "3.12" and python_version < "4.0"
+greenlet==3.0.3 ; python_version < "3.13" and (platform_machine == "aarch64" or platform_machine == "ppc64le" or platform_machine == "x86_64" or platform_machine == "amd64" or platform_machine == "AMD64" or platform_machine == "win32" or platform_machine == "WIN32") and python_version >= "3.12"
+h11==0.14.0 ; python_version >= "3.12" and python_version < "4.0"
+idna==3.8 ; python_version >= "3.12" and python_version < "4.0"
+jinja2==3.1.4 ; python_version >= "3.12" and python_version < "4.0"
+mako==1.3.5 ; python_version >= "3.12" and python_version < "4.0"
+markupsafe==2.1.5 ; python_version >= "3.12" and python_version < "4.0"
+passlib[bcrypt]==1.7.4 ; python_version >= "3.12" and python_version < "4.0"
+psycopg2-binary==2.9.9 ; python_version >= "3.12" and python_version < "4.0"
+pyasn1==0.6.0 ; python_version >= "3.12" and python_version < "4.0"
+pydantic-core==2.20.1 ; python_version >= "3.12" and python_version < "4.0"
+pydantic-settings==2.5.2 ; python_version >= "3.12" and python_version < "4.0"
+pydantic==2.8.2 ; python_version >= "3.12" and python_version < "4.0"
+pydantic[email]==2.8.2 ; python_version >= "3.12" and python_version < "4.0"
+python-dotenv==1.0.1 ; python_version >= "3.12" and python_version < "4.0"
+python-jose==3.3.0 ; python_version >= "3.12" and python_version < "4.0"
+python-multipart==0.0.9 ; python_version >= "3.12" and python_version < "4.0"
+redis==5.0.0 ; python_version >= "3.12" and python_version < "4.0"
+rsa==4.9 ; python_version >= "3.12" and python_version < "4"
+six==1.16.0 ; python_version >= "3.12" and python_version < "4.0"
+sniffio==1.3.1 ; python_version >= "3.12" and python_version < "4.0"
+sqlalchemy==2.0.32 ; python_version >= "3.12" and python_version < "4.0"
+starlette==0.38.2 ; python_version >= "3.12" and python_version < "4.0"
+typing-extensions==4.12.2 ; python_version >= "3.12" and python_version < "4.0"
+urllib3==2.2.3 ; python_version >= "3.12" and python_version < "4.0"
+uvicorn==0.30.6 ; python_version >= "3.12" and python_version < "4.0"

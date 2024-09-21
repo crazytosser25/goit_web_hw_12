@@ -44,6 +44,7 @@ class UserDb(BaseModel):
     email: EmailStr
     created_at: datetime
     confirmed: bool
+    avatar: str | None
 
     class Config:
         """Tells pydantic to convert even non-dict objects to json."""
@@ -87,4 +88,15 @@ class TokenModel(BaseModel):
 
 
 class RequestEmail(BaseModel):
+    """Request model for email-related actions.
+
+    This model is used to validate and structure the data for an email request,
+    typically for requesting email confirmation or password resets.
+
+    Args:
+        BaseModel (pydantic.BaseModel): The base class for all Pydantic models.
+
+    Attributes:
+        email (EmailStr): The user's email address, validated to ensure it's a proper email format.
+    """
     email: EmailStr

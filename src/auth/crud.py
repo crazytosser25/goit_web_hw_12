@@ -51,12 +51,37 @@ async def update_token(user: User, token: str | None, db: Session) -> None:
     db.commit()
 
 async def confirmed_check_toggle(email: str, db: Session) -> None:
-    """_summary_
+    """Toggle the email confirmation status of a user.
+
+    This function retrieves a user by their email and marks their account as confirmed by
+    setting the `confirmed` attribute to `True`. The changes are then committed to the database.
 
     Args:
-        email (str): _description_
-        db (Session): _description_
+        email (str): The email of the user whose confirmation status will be toggled.
+        db (Session): The database session used to retrieve and update the user's record.
+
+    Returns:
+        None
     """
     user = await get_user_by_email(email, db)
     user.confirmed = True
     db.commit()
+
+async def update_avatar(email, url: str, db: Session) -> User:
+    """Update the avatar URL for a specific user.
+
+    This function retrieves a user by their email, updates their avatar URL,
+    and commits the change to the database.
+
+    Args:
+        email (str): The email of the user whose avatar is being updated.
+        url (str): The new avatar URL to be saved to the user's profile.
+        db (Session): The database session used to retrieve and update the user.
+
+    Returns:
+        User: The updated user object with the new avatar URL.
+    """
+    user = await get_user_by_email(email, db)
+    user.avatar = url
+    db.commit()
+    return user

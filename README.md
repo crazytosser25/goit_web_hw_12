@@ -1,8 +1,8 @@
 # goit_web_hw_12
 Homework 12-13 FastAPI + Authorization + Email
 
-  1.  Дані доступу до БД, а також зовнішні хост і порт застосунку, algorythm & secret key
-      повинні бути прописані у файлі .env згідно зразку.
+  1.  Дані доступу до БД, а також зовнішні хост і порт застосунку та інше
+      повинні бути прописані у файлі .env згідно зразку example.env.
 
   2.  Залежності можна встановити з файлу requirenments.txt
 
@@ -13,13 +13,10 @@ Homework 12-13 FastAPI + Authorization + Email
 
   4.  Міграції БД можна виконати командою:
       ```
-      alembic upgrade head
+      alembic upgrade heads
       ```
 
   5.  Запуск застосунку із папки goit_web_hw_11 командою:
       ```
       python start.py
       ```
-
-Коллекція запитів для перевірки створення юзера і оновлення токена
-у файлі:   HW12.postman_collection.json

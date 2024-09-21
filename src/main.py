@@ -21,10 +21,16 @@ r = None  # pylint: disable=C0103
 
 @asynccontextmanager
 async def lifespan(app: FastAPI): # pylint: disable=W0613, W0621
-    """_summary_
+    """Define the lifespan of the FastAPI application.
+
+    This function manages the lifecycle of the FastAPI application, initializing and closing
+    resources such as Redis and FastAPILimiter during the app's lifespan.
 
     Args:
-        app (FastAPI): _description_
+        app (FastAPI): The FastAPI application instance.
+
+    Yields:
+        Allows the FastAPI application to run within this context, managing resources.
     """
     global r  # pylint: disable=W0603
     r = await redis.Redis(
@@ -48,7 +54,7 @@ app.include_router(contact_router)
 app.openapi_schema = app.openapi()
 
 origins = [
-    "http://localhost",
+    "*",
 ]
 
 app.add_middleware(
