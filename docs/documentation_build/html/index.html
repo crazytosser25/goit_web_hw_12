@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ContactsApp documentation &#8212; ContactsApp 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=1fa8e281" />
+    
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">ContactsApp 0.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ContactsApp documentation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="contactsapp-documentation">
+<h1>ContactsApp documentation<a class="headerlink" href="#contactsapp-documentation" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="rest-api-main">
+<h1>REST API main<a class="headerlink" href="#rest-api-main" title="Link to this heading">¶</a></h1>
+<p>Main file</p>
+<p>app_main.<strong>lifespan</strong>(app: FastAPI)</p>
+<blockquote>
+<div><p>Define the lifespan of the FastAPI application.</p>
+<p>This function manages the lifecycle of the FastAPI application, initializing and closing
+resources such as Redis and FastAPILimiter during the app’s lifespan.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>app (FastAPI): The FastAPI application instance.</p>
+</dd>
+<dt>Yields:</dt><dd><p>Allows the FastAPI application to run within this context, managing resources.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>app_main.<strong>root</strong>() -&gt; dict</p>
+<blockquote>
+<div><p>Health check endpoint to verify that the server is running.</p>
+<p>This endpoint can be used to confirm that the server is alive and
+responding to requests. It returns a simple message indicating the server
+status.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing a message indicating that</dt><dd><p>the server is alive.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="module-src.database">
+<span id="rest-api-database"></span><h1>REST API database<a class="headerlink" href="#module-src.database" title="Link to this heading">¶</a></h1>
+<p>Connecting to Postgres</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.database.get_db">
+<span class="sig-prename descclassname"><span class="pre">src.database.</span></span><span class="sig-name descname"><span class="pre">get_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.database.get_db" title="Link to this definition">¶</a></dt>
+<dd><p>Provides a database session to be used within a request context.</p>
+<p>This function is designed to be used as a dependency in FastAPI endpoints.
+It yields a SQLAlchemy session that is used for the duration of the request
+and ensures that the session is properly closed after the request is
+completed, even if an exception occurs.</p>
+<dl class="simple">
+<dt>Yields:</dt><dd><p>Session: An instance of SQLAlchemy session (DBSession)
+which can be used to interact with the database.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.contacts.router">
+<span id="contacts-router"></span><h1>Contacts Router<a class="headerlink" href="#module-src.contacts.router" title="Link to this heading">¶</a></h1>
+<p>Router for contast book</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.contacts.router.create_contact">
+<span class="sig-prename descclassname"><span class="pre">src.contacts.router.</span></span><span class="sig-name descname"><span class="pre">create_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contact</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.contacts.schemas.ContactCreation" title="src.contacts.schemas.ContactCreation"><span class="pre">ContactCreation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.contacts.schemas.ContactScema" title="src.contacts.schemas.ContactScema"><span class="pre">ContactScema</span></a></span></span><a class="headerlink" href="#src.contacts.router.create_contact" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a new contact in the database.</p>
+<p>This endpoint allows the user to create a new contact by providing the
+necessary information such as first name, last name, email, phone number,
+birthday, and any additional data. The contact information is validated
+and then saved to the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>contact (schemas.ContactCreation): The contact data required to create</dt><dd><p>a new contact. This includes fields like first name, last name,
+email, phone number, and birthday.</p>
+</dd>
+<dt>db (Session, optional): The database session used to interact with</dt><dd><p>the database. It is provided by the dependency injection system
+through Depends(get_db).</p>
+</dd>
+<dt>user (UserDb, optional): The currently authenticated user making the</dt><dd><p>request. This dependency is resolved using
+Depends(auth_s.get_current_user) to ensure that the contact is
+associated with the correct user.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>schemas.Contact: The newly created contact with all the details</dt><dd><p>including the assigned ID.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.contacts.router.delete_contact">
+<span class="sig-prename descclassname"><span class="pre">src.contacts.router.</span></span><span class="sig-name descname"><span class="pre">delete_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contact_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#src.contacts.router.delete_contact" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a contact from the database by its ID.</p>
+<p>This endpoint deletes the contact specified by the given ID. If the contact
+is found, it is removed from the database. If the contact is not found,
+an HTTP 404 exception is raised.</p>
+<dl>
+<dt>Args:</dt><dd><p>contact_id (int): The unique identifier of the contact to be deleted.
+db (Session, optional): The database session used to interact with the</p>
+<blockquote>
+<div><p>database, provided by dependency injection through Depends(get_db).</p>
+</div></blockquote>
+<dl class="simple">
+<dt>user (UserDb, optional): The currently authenticated user making the</dt><dd><p>request. This dependency is resolved using
+Depends(auth_s.get_current_user) to ensure that the contact is
+associated with the correct user.</p>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><dl class="simple">
+<dt>HTTPException: If the contact with the given ID is not found, an</dt><dd><p>HTTP 404 exception is raised with a message indicating that the
+contact was not found.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing a message indicating that the contact was</dt><dd><p>successfully deleted.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.contacts.router.read_contact">
+<span class="sig-prename descclassname"><span class="pre">src.contacts.router.</span></span><span class="sig-name descname"><span class="pre">read_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contact_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.contacts.schemas.ContactScema" title="src.contacts.schemas.ContactScema"><span class="pre">ContactScema</span></a></span></span><a class="headerlink" href="#src.contacts.router.read_contact" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves a specific contact by its ID from the database.</p>
+<p>This endpoint fetches the contact with the specified ID. If the contact
+is found, it returns the contact details; otherwise, it raises an
+HTTP 404 exception.</p>
+<dl>
+<dt>Args:</dt><dd><p>contact_id (int): The unique identifier of the contact to retrieve.
+db (Session, optional): The database session used to interact with t</p>
+<blockquote>
+<div><p>he database, provided by dependency injection through
+Depends(get_db).</p>
+</div></blockquote>
+<dl class="simple">
+<dt>user (UserDb, optional): The currently authenticated user making the</dt><dd><p>request. This dependency is resolved using
+Depends(auth_s.get_current_user) to ensure that the contact is
+associated with the correct user.</p>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><dl class="simple">
+<dt>HTTPException: If the contact with the given ID is not found, an</dt><dd><p>HTTP 404 exception is raised with a message indicating that
+the contact was not found.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>schemas.Contact: The contact details of the specified contact ID,</dt><dd><p>including fields such as first name, last name, email,
+phone number, birthday, and any additional information.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.contacts.router.read_contacts">
+<span class="sig-prename descclassname"><span class="pre">src.contacts.router.</span></span><span class="sig-name descname"><span class="pre">read_contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#src.contacts.schemas.ContactScema" title="src.contacts.schemas.ContactScema"><span class="pre">ContactScema</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.contacts.router.read_contacts" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves a list of all contacts from the database.</p>
+<p>This endpoint fetches all contacts stored in the database and returns
+them as a list. It uses the provided database session to query the contacts
+table and retrieve all records.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>db (Session, optional): The database session used to interact with</dt><dd><p>the database.It is provided by dependency injection through
+Depends(get_db).</p>
+</dd>
+<dt>user (UserDb, optional): The currently authenticated user making the</dt><dd><p>request. This dependency is resolved using
+Depends(auth_s.get_current_user) to ensure that the contact is
+associated with the correct user.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>list[schemas.Contact]: A list of contacts, where each contact contains</dt><dd><p>details such as first name, last name, email, phone number,
+birthday, and any additional information.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.contacts.router.search_contacts">
+<span class="sig-prename descclassname"><span class="pre">src.contacts.router.</span></span><span class="sig-name descname"><span class="pre">search_contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#src.contacts.schemas.ContactScema" title="src.contacts.schemas.ContactScema"><span class="pre">ContactScema</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.contacts.router.search_contacts" title="Link to this definition">¶</a></dt>
+<dd><p>Searches for contacts based on a query string.</p>
+<p>This endpoint allows the user to search for contacts by matching the query
+string against the first name, last name, or email of the contacts in
+the database. It returns a list of contacts that match the search criteria.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>query (str): The search term used to filter contacts. It can be part of</dt><dd><p>the first name, last name, or email.</p>
+</dd>
+<dt>db (Session, optional): The database session used to interact with</dt><dd><p>the database, provided by dependency injection through
+Depends(get_db).</p>
+</dd>
+<dt>user (UserDb, optional): The currently authenticated user making the</dt><dd><p>request. This dependency is resolved using
+Depends(auth_s.get_current_user) to ensure that the contact is
+associated with the correct user.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>List[schemas.Contact]: A list of contacts that match the search</dt><dd><p>criteria, including details such as first name, last name, email,
+phone number, birthday, and any additional information.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.contacts.router.upcoming_birthdays">
+<span class="sig-prename descclassname"><span class="pre">src.contacts.router.</span></span><span class="sig-name descname"><span class="pre">upcoming_birthdays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#src.contacts.schemas.ContactScema" title="src.contacts.schemas.ContactScema"><span class="pre">ContactScema</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.contacts.router.upcoming_birthdays" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves contacts with upcoming birthdays within the next 7 days.</p>
+<p>This endpoint fetches contacts whose birthdays are occurring within the
+next 7 days from the current date. It uses the provided database session
+to query and return the matching contacts.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>db (Session, optional): The database session used to interact with</dt><dd><p>the database, provided by dependency injection through
+Depends(get_db).</p>
+</dd>
+<dt>user (UserDb, optional): The currently authenticated user making the</dt><dd><p>request. This dependency is resolved using
+Depends(auth_s.get_current_user) to ensure that the contact is
+associated with the correct user.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>List[schemas.Contact]: A list of contacts with upcoming birthdays,</dt><dd><p>including details such as first name, last name, email,
+phone number, birthday, and any additional information.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.contacts.router.update_contact">
+<span class="sig-prename descclassname"><span class="pre">src.contacts.router.</span></span><span class="sig-name descname"><span class="pre">update_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contact_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contact</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.contacts.schemas.ContactCreation" title="src.contacts.schemas.ContactCreation"><span class="pre">ContactCreation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.contacts.schemas.ContactScema" title="src.contacts.schemas.ContactScema"><span class="pre">ContactScema</span></a></span></span><a class="headerlink" href="#src.contacts.router.update_contact" title="Link to this definition">¶</a></dt>
+<dd><p>Updates an existing contact in the database by its ID.</p>
+<p>This endpoint allows updating the details of an existing contact. It
+accepts the contact ID to identify which contact to update and the new
+contact data. If the contact with the specified ID is not found, it raises
+a 404 HTTP exception.</p>
+<dl>
+<dt>Args:</dt><dd><p>contact_id (int): The unique identifier of the contact to be updated.
+contact (schemas.ContactCreation): The new data for the contact,</p>
+<blockquote>
+<div><p>including fields such as first name, last name, email, phone
+number, birthday, and additional information.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>db (Session, optional): The database session used to interact with</dt><dd><p>the database, provided by dependency injection through
+Depends(get_db).</p>
+</dd>
+<dt>user (UserDb, optional): The currently authenticated user making the</dt><dd><p>request. This dependency is resolved using
+Depends(auth_s.get_current_user) to ensure that the contact is
+associated with the correct user.</p>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><dl class="simple">
+<dt>HTTPException: If the contact with the given ID is not found, an</dt><dd><p>HTTP 404 exception is raised with a message indicating that the
+contact was not found.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>schemas.Contact: The updated contact details, including the modified</dt><dd><p>fields and other existing information.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.contacts.models">
+<span id="contacts-models"></span><h1>Contacts Models<a class="headerlink" href="#module-src.contacts.models" title="Link to this heading">¶</a></h1>
+<p>Data models for DB</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.contacts.models.Contact">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.contacts.models.</span></span><span class="sig-name descname"><span class="pre">Contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.contacts.models.Contact" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></p>
+<p>Represents a contact in the database.</p>
+<p>This class maps to the <cite>contacts</cite> table in the database and defines the schema
+for storing contact information. Each contact includes personal details such as
+names, email, phone number, birthday, and additional information.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>Base (DeclarativeMeta): The base class for all SQLAlchemy models, which provides</dt><dd><p>the necessary functionality for ORM mapping.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.models.Contact.birthday">
+<span class="sig-name descname"><span class="pre">birthday</span></span><a class="headerlink" href="#src.contacts.models.Contact.birthday" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.models.Contact.email">
+<span class="sig-name descname"><span class="pre">email</span></span><a class="headerlink" href="#src.contacts.models.Contact.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.models.Contact.first_name">
+<span class="sig-name descname"><span class="pre">first_name</span></span><a class="headerlink" href="#src.contacts.models.Contact.first_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.models.Contact.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#src.contacts.models.Contact.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.models.Contact.last_name">
+<span class="sig-name descname"><span class="pre">last_name</span></span><a class="headerlink" href="#src.contacts.models.Contact.last_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.models.Contact.other_info">
+<span class="sig-name descname"><span class="pre">other_info</span></span><a class="headerlink" href="#src.contacts.models.Contact.other_info" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.models.Contact.phone_number">
+<span class="sig-name descname"><span class="pre">phone_number</span></span><a class="headerlink" href="#src.contacts.models.Contact.phone_number" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.models.Contact.user">
+<span class="sig-name descname"><span class="pre">user</span></span><a class="headerlink" href="#src.contacts.models.Contact.user" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.models.Contact.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#src.contacts.models.Contact.user_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.contacts.schemas">
+<span id="contacts-schemas"></span><h1>Contacts Schemas<a class="headerlink" href="#module-src.contacts.schemas" title="Link to this heading">¶</a></h1>
+<p>Schemas for check</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactBasic">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.contacts.schemas.</span></span><span class="sig-name descname"><span class="pre">ContactBasic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">50</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">50</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EmailStr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phone_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">12</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">birthday</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">250</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.contacts.schemas.ContactBasic" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>A Pydantic model for basic contact information.</p>
+<p>This model defines the schema for the contact’s essential details, including
+names, email, phone number, birthday, and additional information. It is used
+for validation and serialization/deserialization of contact data.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>BaseModel (BaseModel): The base class for Pydantic models, providing validation</dt><dd><p>and serialization capabilities.</p>
+</dd>
+</dl>
+</dd>
+<dt>Attributes:</dt><dd><p>first_name (str): The first name of the contact. Maximum length is 50 characters.
+last_name (str): The last name of the contact. Maximum length is 50 characters.
+email (EmailStr): The contact’s email address, validated as a proper email format.
+phone_number (str): The contact’s phone number. Maximum length is 12 characters.
+birthday (date): The contact’s birthday in <cite>YYYY-MM-DD</cite> format.
+other_info (Optional[str]): Additional information about the contact. Maximum</p>
+<blockquote>
+<div><p>length is 250 characters. This field is optional.</p>
+</div></blockquote>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactBasic.birthday">
+<span class="sig-name descname"><span class="pre">birthday</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">date</span></em><a class="headerlink" href="#src.contacts.schemas.ContactBasic.birthday" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactBasic.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">EmailStr</span></em><a class="headerlink" href="#src.contacts.schemas.ContactBasic.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactBasic.first_name">
+<span class="sig-name descname"><span class="pre">first_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#src.contacts.schemas.ContactBasic.first_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactBasic.last_name">
+<span class="sig-name descname"><span class="pre">last_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#src.contacts.schemas.ContactBasic.last_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactBasic.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.contacts.schemas.ContactBasic.model_computed_fields" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactBasic.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.contacts.schemas.ContactBasic.model_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactBasic.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'birthday':</span> <span class="pre">FieldInfo(annotation=date,</span> <span class="pre">required=True),</span> <span class="pre">'email':</span> <span class="pre">FieldInfo(annotation=EmailStr,</span> <span class="pre">required=True),</span> <span class="pre">'first_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MaxLen(max_length=50)]),</span> <span class="pre">'last_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MaxLen(max_length=50)]),</span> <span class="pre">'other_info':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MaxLen(max_length=250)]),</span> <span class="pre">'phone_number':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MaxLen(max_length=12)])}</span></em><a class="headerlink" href="#src.contacts.schemas.ContactBasic.model_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactBasic.other_info">
+<span class="sig-name descname"><span class="pre">other_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#src.contacts.schemas.ContactBasic.other_info" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactBasic.phone_number">
+<span class="sig-name descname"><span class="pre">phone_number</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#src.contacts.schemas.ContactBasic.phone_number" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactCreation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.contacts.schemas.</span></span><span class="sig-name descname"><span class="pre">ContactCreation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">50</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">50</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EmailStr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phone_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">12</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">birthday</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">250</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.contacts.schemas.ContactCreation" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.contacts.schemas.ContactBasic" title="src.contacts.schemas.ContactBasic"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContactBasic</span></code></a></p>
+<p>A Pydantic model for creating a new contact.</p>
+<p>This model extends <cite>ContactBasic</cite> and is used when creating a new contact. It includes
+all the fields from <cite>ContactBasic</cite> but does not add any additional fields or validation
+rules.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>ContactBasic (BaseModel): Inherits validation and serialization capabilities from</dt><dd><p><cite>ContactBasic</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactCreation.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.contacts.schemas.ContactCreation.model_computed_fields" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactCreation.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.contacts.schemas.ContactCreation.model_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactCreation.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'birthday':</span> <span class="pre">FieldInfo(annotation=date,</span> <span class="pre">required=True),</span> <span class="pre">'email':</span> <span class="pre">FieldInfo(annotation=EmailStr,</span> <span class="pre">required=True),</span> <span class="pre">'first_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MaxLen(max_length=50)]),</span> <span class="pre">'last_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MaxLen(max_length=50)]),</span> <span class="pre">'other_info':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MaxLen(max_length=250)]),</span> <span class="pre">'phone_number':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MaxLen(max_length=12)])}</span></em><a class="headerlink" href="#src.contacts.schemas.ContactCreation.model_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactScema">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.contacts.schemas.</span></span><span class="sig-name descname"><span class="pre">ContactScema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">50</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">50</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EmailStr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phone_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">12</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">birthday</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">250</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.contacts.schemas.ContactScema" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.contacts.schemas.ContactBasic" title="src.contacts.schemas.ContactBasic"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContactBasic</span></code></a></p>
+<p>A Pydantic model for contact data including an ID.</p>
+<p>This model extends <cite>ContactBasic</cite> by adding an <cite>id</cite> field. It is used to represent a
+contact record retrieved from the database, which includes all basic contact details
+along with a unique identifier.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>ContactBasic (BaseModel): Inherits fields and validation from <cite>ContactBasic</cite>.</p>
+</dd>
+<dt>Attributes:</dt><dd><p>id (int): The unique identifier of the contact.</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactScema.Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Config</span></span><a class="headerlink" href="#src.contacts.schemas.ContactScema.Config" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Tells pydantic to convert even non-dict objects to json.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactScema.Config.from_attributes">
+<span class="sig-name descname"><span class="pre">from_attributes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#src.contacts.schemas.ContactScema.Config.from_attributes" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactScema.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#src.contacts.schemas.ContactScema.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactScema.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.contacts.schemas.ContactScema.model_computed_fields" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactScema.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True}</span></em><a class="headerlink" href="#src.contacts.schemas.ContactScema.model_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.contacts.schemas.ContactScema.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'birthday':</span> <span class="pre">FieldInfo(annotation=date,</span> <span class="pre">required=True),</span> <span class="pre">'email':</span> <span class="pre">FieldInfo(annotation=EmailStr,</span> <span class="pre">required=True),</span> <span class="pre">'first_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MaxLen(max_length=50)]),</span> <span class="pre">'id':</span> <span class="pre">FieldInfo(annotation=int,</span> <span class="pre">required=True),</span> <span class="pre">'last_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MaxLen(max_length=50)]),</span> <span class="pre">'other_info':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MaxLen(max_length=250)]),</span> <span class="pre">'phone_number':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MaxLen(max_length=12)])}</span></em><a class="headerlink" href="#src.contacts.schemas.ContactScema.model_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.contacts.crud">
+<span id="contacts-crud-operations"></span><h1>Contacts CRUD operations<a class="headerlink" href="#module-src.contacts.crud" title="Link to this heading">¶</a></h1>
+<p>CRUD operations</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.contacts.crud.CrudOps">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.contacts.crud.</span></span><span class="sig-name descname"><span class="pre">CrudOps</span></span><a class="headerlink" href="#src.contacts.crud.CrudOps" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to import all CRUD operation in one peace.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.contacts.crud.CrudOps.create_contact">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contact</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.contacts.schemas.ContactCreation" title="src.contacts.schemas.ContactCreation"><span class="pre">ContactCreation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.contacts.models.Contact" title="src.contacts.models.Contact"><span class="pre">Contact</span></a></span></span><a class="headerlink" href="#src.contacts.crud.CrudOps.create_contact" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a new contact in the database.</p>
+<p>This function accepts a contact creation schema, converts it into a
+database model, and adds the new contact to the database. It then commits
+the transaction to save the new contact and refreshes the session to
+retrieve the full data of the newly created contact.</p>
+<dl>
+<dt>Args:</dt><dd><p>base (Session): The database session used to interact with the database.
+contact (schemas.ContactCreation): The data required to create a new</p>
+<blockquote>
+<div><p>contact, including fields such as first name, last name, email,
+phone number, birthday, and any additional information.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>user (UserDb): The currently authenticated user who is creating the contact.</dt><dd><p>This user will be associated with the contact.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>models.Contact: The newly created contact record from the database,</dt><dd><p>containing all its details including the automatically generated
+fields like ID.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.contacts.crud.CrudOps.delete_contact">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.contacts.models.Contact" title="src.contacts.models.Contact"><span class="pre">Contact</span></a></span></span><a class="headerlink" href="#src.contacts.crud.CrudOps.delete_contact" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a contact from the database by its ID.</p>
+<p>This function locates a contact using the provided ID and removes it from the
+database. If the contact is found, it is deleted and the changes are committed
+to the database. The function returns the deleted contact if it was found and
+removed. If no contact with the given ID is found, the function returns <cite>None</cite>.</p>
+<dl>
+<dt>Args:</dt><dd><p>base (Session): The database session used to interact with the database.
+<a href="#id1"><span class="problematic" id="id2">id_</span></a> (int): The unique identifier of the contact to be deleted.
+user (UserDb): The currently authenticated user who is creating the contact.</p>
+<blockquote>
+<div><p>This user will be associated with the contact.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><p>models.Contact: The deleted contact object if it was found and removed.
+If no contact with the given ID exists, it returns <cite>None</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.contacts.crud.CrudOps.get_all_contacts">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#src.contacts.models.Contact" title="src.contacts.models.Contact"><span class="pre">Contact</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.contacts.crud.CrudOps.get_all_contacts" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves all contacts from the database.</p>
+<p>This function queries the database to retrieve and return a list of all
+contact records. It fetches every contact stored in the database and
+returns them as a list.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>base (Session): The database session used to interact with the database.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>list[models.Contact]: A list of contact objects representing all</dt><dd><p>contacts in the database. Each contact includes details such as
+first name, last name, email, phone number, birthday, and any
+additional information.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.contacts.crud.CrudOps.get_contact">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.contacts.models.Contact" title="src.contacts.models.Contact"><span class="pre">Contact</span></a></span></span><a class="headerlink" href="#src.contacts.crud.CrudOps.get_contact" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves a contact from the database by its ID.</p>
+<p>This function queries the database to find and return the contact with the
+specified ID. If the contact exists, it returns the contact object;
+otherwise, it returns <cite>None</cite>.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>base (Session): The database session used to interact with the database.
+<a href="#id3"><span class="problematic" id="id4">id_</span></a> (int): The unique identifier of the contact to retrieve.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>models.Contact: The contact object corresponding to the specified ID.</dt><dd><p>If no contact with the given ID is found, it returns <cite>None</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.contacts.crud.CrudOps.get_upcoming_birthdays">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_upcoming_birthdays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#src.contacts.models.Contact" title="src.contacts.models.Contact"><span class="pre">Contact</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.contacts.crud.CrudOps.get_upcoming_birthdays" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves contacts with birthdays occurring in the next 7 days.</p>
+<p>This function searches through all contacts in the database to find those whose
+birthdays fall within the next 7 days from the current date. It calculates the
+upcoming birthdays by comparing the contact’s birth date with the current date
+and determines if the birthday is within the specified range. Contacts with
+upcoming birthdays are adjusted to the nearest weekend day (Saturday or Sunday)
+if they fall on a weekday.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>base (Session): The database session used to query and interact with</dt><dd><p>the database.</p>
+</dd>
+<dt>user (UserDb): The currently authenticated user who is creating the contact.</dt><dd><p>This user will be associated with the contact.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>List[models.Contact]: A list of contact objects with birthdays occurring in the
+next 7 days. Each contact includes details such as first name, last name, email,
+phone number, birthday, and any additional information. If no contacts have
+upcoming birthdays, an empty list is returned.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.contacts.crud.CrudOps.search_contacts">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search_contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#src.contacts.models.Contact" title="src.contacts.models.Contact"><span class="pre">Contact</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.contacts.crud.CrudOps.search_contacts" title="Link to this definition">¶</a></dt>
+<dd><p>Searches for contacts that match the given query string.</p>
+<p>This function searches for contacts where the query string matches any
+part of the contact’s first name, last name, or email. The search is
+case-insensitive and uses partial matching to find relevant contacts.</p>
+<dl>
+<dt>Args:</dt><dd><p>base (Session): The database session used to interact with the database.
+query (str): The search term used to filter contacts. It will be</p>
+<blockquote>
+<div><p>matched against the contact’s first name, last name, and email fields.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>user (UserDb): The currently authenticated user who is creating the contact.</dt><dd><p>This user will be associated with the contact.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>list[models.Contact]: A list of contact objects that match the search</dt><dd><p>criteria. Each contact object includes details such as first name,
+last name, email, phone number, birthday, and any
+additional information.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.contacts.crud.CrudOps.update_contact">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contact</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.contacts.schemas.ContactCreation" title="src.contacts.schemas.ContactCreation"><span class="pre">ContactCreation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.contacts.models.Contact" title="src.contacts.models.Contact"><span class="pre">Contact</span></a></span></span><a class="headerlink" href="#src.contacts.crud.CrudOps.update_contact" title="Link to this definition">¶</a></dt>
+<dd><p>Updates an existing contact in the database with new data.</p>
+<p>This function locates a contact by its ID and updates its attributes with the data
+provided in the <cite>contact</cite> schema. If the contact is found, its fields are updated
+with the new values, the changes are committed to the database, and the updated
+contact is returned. If the contact with the given ID is not found, the function
+returns <cite>None</cite>.</p>
+<dl>
+<dt>Args:</dt><dd><p>base (Session): The database session used to interact with the database.
+<a href="#id5"><span class="problematic" id="id6">id_</span></a> (int): The unique identifier of the contact to be updated.
+contact (schemas.ContactCreation): The new data for the contact, which includes</p>
+<blockquote>
+<div><p>fields such as first name, last name, email, phone number, birthday, and
+any additional information.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>user (UserDb): The currently authenticated user who is creating the contact.</dt><dd><p>This user will be associated with the contact.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>models.Contact: The updated contact object if the contact was found and updated.</dt><dd><p>If the contact with the given ID does not exist, it returns <cite>None</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.auth.router">
+<span id="authentication-router"></span><h1>Authentication Router<a class="headerlink" href="#module-src.auth.router" title="Link to this heading">¶</a></h1>
+<p>Router for authentification</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.auth.router.confirmed_email">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.router.</span></span><span class="sig-name descname"><span class="pre">confirmed_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#src.auth.router.confirmed_email" title="Link to this definition">¶</a></dt>
+<dd><p>Confirm a user’s email based on the provided token.</p>
+<p>This endpoint validates the email confirmation token, checks if the user’s email is
+already confirmed, and updates the confirmation status if necessary. It is rate-limited
+to 5 requests every 30 seconds to prevent abuse.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token (str): The email confirmation token.
+db (Session, optional): The database session dependency. Defaults to Depends(get_db).</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: Raised with a 400 status code if the user is not found or if the token is invalid.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing a confirmation message. The message is either:</dt><dd><ul class="simple">
+<li><p>“Email confirmed” if the confirmation was successful.</p></li>
+<li><p>“Your email is already confirmed” if the email was previously confirmed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.auth.router.login">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.router.</span></span><span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OAuth2PasswordRequestForm</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(NoneType)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.auth.schemas.TokenModel" title="src.auth.schemas.TokenModel"><span class="pre">TokenModel</span></a></span></span><a class="headerlink" href="#src.auth.router.login" title="Link to this definition">¶</a></dt>
+<dd><p>Authenticates a user and generates access and refresh tokens.</p>
+<p>This endpoint allows a registered user to log in by providing their email (as username)
+and password. If the credentials are correct, it returns a pair of JWT tokens:
+an access token and a refresh token. If the credentials are incorrect, an appropriate
+HTTP error is raised.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>body (OAuth2PasswordRequestForm, optional): The login form data containing the username
+(email) and password. This is automatically populated by FastAPI using dependency injection.
+db (Session, optional): The database session dependency, automatically injected by FastAPI.</p>
+</dd>
+<dt>Raises:</dt><dd><dl class="simple">
+<dt>HTTPException: If the user does not exist, a 404 Not Found error is raised</dt><dd><p>with the message “Invalid data”.</p>
+</dd>
+<dt>HTTPException: If the password is incorrect, a 401 Unauthorized error is raised</dt><dd><p>with the message “Invalid data”.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>TokenModel: An object containing the access token, refresh token,</dt><dd><p>and the token type (bearer).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.auth.router.read_users_me">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.router.</span></span><span class="sig-name descname"><span class="pre">read_users_me</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.models.User" title="src.auth.models.User"><span class="pre">User</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span></span><a class="headerlink" href="#src.auth.router.read_users_me" title="Link to this definition">¶</a></dt>
+<dd><p>Get the current authenticated user’s details.</p>
+<p>This endpoint retrieves the information of the currently authenticated user.
+The user’s details are returned in the response model format <cite>UserDb</cite>.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>current_user (User, optional): The current authenticated user.</dt><dd><p>It is automatically injected by the <cite>Depends(auth_s.get_current_user)</cite> function.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>UserDb: A model representing the authenticated user’s details.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.auth.router.refresh_token">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.router.</span></span><span class="sig-name descname"><span class="pre">refresh_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">credentials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Security(HTTPBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.auth.schemas.TokenModel" title="src.auth.schemas.TokenModel"><span class="pre">TokenModel</span></a></span></span><a class="headerlink" href="#src.auth.router.refresh_token" title="Link to this definition">¶</a></dt>
+<dd><p>Refreshes the JWT access and refresh tokens for a user.</p>
+<p>This endpoint allows a user to obtain a new pair of access and refresh tokens using
+a valid refresh token. It validates the provided refresh token, ensures it matches the one
+stored in the database, and then generates new tokens. If the refresh token is invalid or
+does not match, an error is raised.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>credentials (HTTPAuthorizationCredentials, optional): The credentials object containing</dt><dd><p>the refresh token. This is automatically provided via dependency injection using
+the <cite>Security</cite> dependency with <cite>get_refr_token</cite>.</p>
+</dd>
+</dl>
+<p>db (Session, optional): The database session dependency, automatically injected by FastAPI.</p>
+</dd>
+<dt>Raises:</dt><dd><dl class="simple">
+<dt>HTTPException: If the refresh token is invalid or does not match the one stored in</dt><dd><p>the user’s record, a 401 Unauthorized error is raised with
+the message “Invalid refresh token”.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>TokenModel: An object containing the new access token, refresh token, a</dt><dd><p>nd the token type (bearer).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.auth.router.request_email">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.router.</span></span><span class="sig-name descname"><span class="pre">request_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.RequestEmail" title="src.auth.schemas.RequestEmail"><span class="pre">RequestEmail</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BackgroundTasks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#src.auth.router.request_email" title="Link to this definition">¶</a></dt>
+<dd><p>Request email confirmation for a user.</p>
+<p>This endpoint allows users to request a confirmation email if their email is not yet confirmed.
+If the email is already confirmed, it informs the user. The confirmation email is sent
+asynchronously using background tasks. The function is rate-limited to 5 requests every
+30 seconds.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>body (RequestEmail): The request body containing the user’s email address.
+bt (BackgroundTasks): A background task manager for sending the email asynchronously.
+request (Request): The HTTP request object, used to get the base URL.
+db (Session, optional): The database session dependency. Defaults to Depends(get_db).</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing a message. The message is either:</dt><dd><ul class="simple">
+<li><p>“Your email is already confirmed” if the email was previously confirmed.</p></li>
+<li><dl class="simple">
+<dt>“Check your email for confirmation.” if the confirmation email was successfully</dt><dd><p>requested.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.auth.router.signup">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.router.</span></span><span class="sig-name descname"><span class="pre">signup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserScema" title="src.auth.schemas.UserScema"><span class="pre">UserScema</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BackgroundTasks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#src.auth.router.signup" title="Link to this definition">¶</a></dt>
+<dd><p>Handles user registration by creating a new user account.</p>
+<p>This endpoint allows a new user to register by providing their username, email, and password.
+The password is hashed before being stored in the database. If the email is already in use,
+an HTTP 409 Conflict error is raised.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>body (UserScema): The request body containing the new user’s data, including</dt><dd><p>username, email, and password.</p>
+</dd>
+</dl>
+<p>db (Session, optional): The database session dependency, automatically injected by FastAPI.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the email provided is already associated with an existing account,
+a 409 Conflict error is raised with the message “Account already exists”.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing the newly created user’s data and a success message.</dt><dd><p>The dictionary includes:
+- “user”: The <cite>UserDb</cite> model instance representing the new user.
+- “detail”: A message indicating the user was successfully created.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.auth.router.update_avatar_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.router.</span></span><span class="sig-name descname"><span class="pre">update_avatar_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UploadFile</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">File(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.models.User" title="src.auth.models.User"><span class="pre">User</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span></span><a class="headerlink" href="#src.auth.router.update_avatar_user" title="Link to this definition">¶</a></dt>
+<dd><p>Update the avatar of the current authenticated user.</p>
+<p>This endpoint allows the user to upload a new avatar image, which is stored in Cloudinary.
+The uploaded image is processed and resized, and the URL to the new avatar is saved to
+the user’s profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>file (UploadFile, optional): The avatar image file to be uploaded. Defaults to File().</dt><dd><p>current_user (User, optional): The current authenticated user. Injected via `
+Depends(auth_s.get_current_user)`.</p>
+</dd>
+<dt>db (Session, optional): The database session used to update the user. Defaults to `</dt><dd><p>Depends(get_db)`.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>UserDb: The updated user profile with the new avatar URL.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.auth.models">
+<span id="authentication-models"></span><h1>Authentication Models<a class="headerlink" href="#module-src.auth.models" title="Link to this heading">¶</a></h1>
+<p>Data models for DB</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.auth.models.User">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.models.</span></span><span class="sig-name descname"><span class="pre">User</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.auth.models.User" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></p>
+<p>Represents a user in the application.</p>
+<p>This model defines the structure of the ‘users’ table in the database and contains fields
+relevant to the user’s information and authentication details.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>Base (SQLAlchemy Base): The base class for SQLAlchemy models, used to define</dt><dd><p>the database table.</p>
+</dd>
+</dl>
+</dd>
+<dt>Attributes:</dt><dd><p>id (int): The primary key identifier for the user.
+username (str): The username of the user. Cannot be null.
+email (str): The email address of the user. Must be unique and cannot be null.
+password (str): The hashed password of the user. Cannot be null.
+created_at (datetime): The date and time when the user was created.
+refresh_token (str, optional): The refresh token associated with the user,</p>
+<blockquote>
+<div><p>used for authentication.</p>
+</div></blockquote>
+<p>avatar (str): Url to picture on Cloudinary</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.models.User.avatar">
+<span class="sig-name descname"><span class="pre">avatar</span></span><a class="headerlink" href="#src.auth.models.User.avatar" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.models.User.confirmed">
+<span class="sig-name descname"><span class="pre">confirmed</span></span><a class="headerlink" href="#src.auth.models.User.confirmed" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.models.User.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#src.auth.models.User.created_at" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.models.User.email">
+<span class="sig-name descname"><span class="pre">email</span></span><a class="headerlink" href="#src.auth.models.User.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.models.User.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#src.auth.models.User.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.models.User.password">
+<span class="sig-name descname"><span class="pre">password</span></span><a class="headerlink" href="#src.auth.models.User.password" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.models.User.refresh_token">
+<span class="sig-name descname"><span class="pre">refresh_token</span></span><a class="headerlink" href="#src.auth.models.User.refresh_token" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.models.User.username">
+<span class="sig-name descname"><span class="pre">username</span></span><a class="headerlink" href="#src.auth.models.User.username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.auth.schemas">
+<span id="authentication-schemas"></span><h1>Authentication Schemas<a class="headerlink" href="#module-src.auth.schemas" title="Link to this heading">¶</a></h1>
+<p>Schemas for check</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.auth.schemas.RequestEmail">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.schemas.</span></span><span class="sig-name descname"><span class="pre">RequestEmail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EmailStr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.auth.schemas.RequestEmail" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Request model for email-related actions.</p>
+<p>This model is used to validate and structure the data for an email request,
+typically for requesting email confirmation or password resets.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>BaseModel (pydantic.BaseModel): The base class for all Pydantic models.</p>
+</dd>
+<dt>Attributes:</dt><dd><p>email (EmailStr): The user’s email address, validated to ensure it’s a proper email format.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.RequestEmail.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">EmailStr</span></em><a class="headerlink" href="#src.auth.schemas.RequestEmail.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.RequestEmail.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.auth.schemas.RequestEmail.model_computed_fields" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.RequestEmail.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.auth.schemas.RequestEmail.model_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.RequestEmail.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'email':</span> <span class="pre">FieldInfo(annotation=EmailStr,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#src.auth.schemas.RequestEmail.model_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.auth.schemas.TokenModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.schemas.</span></span><span class="sig-name descname"><span class="pre">TokenModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'bearer'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.auth.schemas.TokenModel" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Represents the model for authentication tokens.</p>
+<p>This schema is used for returning access and refresh tokens upon successful login
+or token refresh.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>BaseModel (Pydantic BaseModel): The base class for creating data models.</p>
+</dd>
+<dt>Attributes:</dt><dd><p>access_token (str): The JWT access token used for authentication.
+refresh_token (str): The JWT refresh token used to obtain new access tokens.
+token_type (str): The type of the token, which is “bearer” by default.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.TokenModel.access_token">
+<span class="sig-name descname"><span class="pre">access_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#src.auth.schemas.TokenModel.access_token" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.TokenModel.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.auth.schemas.TokenModel.model_computed_fields" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.TokenModel.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.auth.schemas.TokenModel.model_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.TokenModel.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'access_token':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'refresh_token':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'token_type':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='bearer')}</span></em><a class="headerlink" href="#src.auth.schemas.TokenModel.model_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.TokenModel.refresh_token">
+<span class="sig-name descname"><span class="pre">refresh_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#src.auth.schemas.TokenModel.refresh_token" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.TokenModel.token_type">
+<span class="sig-name descname"><span class="pre">token_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#src.auth.schemas.TokenModel.token_type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.auth.schemas.UserDb">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.schemas.</span></span><span class="sig-name descname"><span class="pre">UserDb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EmailStr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created_at</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confirmed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avatar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.auth.schemas.UserDb" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Represents the database model for a user, used for returning user data from the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>BaseModel (Pydantic BaseModel): The base class for creating data models.</p>
+</dd>
+<dt>Attributes:</dt><dd><p>id (int): The unique identifier of the user.
+username (str): The username of the user.
+email (EmailStr): The email address of the user.
+created_at (datetime): The datetime when the user was created.</p>
+</dd>
+<dt>Config:</dt><dd><dl class="simple">
+<dt>from_attributes (bool): Allows Pydantic to convert non-dict objects</dt><dd><p>(like SQLAlchemy models) to JSON.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.auth.schemas.UserDb.Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Config</span></span><a class="headerlink" href="#src.auth.schemas.UserDb.Config" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Tells pydantic to convert even non-dict objects to json.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserDb.Config.from_attributes">
+<span class="sig-name descname"><span class="pre">from_attributes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#src.auth.schemas.UserDb.Config.from_attributes" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserDb.avatar">
+<span class="sig-name descname"><span class="pre">avatar</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#src.auth.schemas.UserDb.avatar" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserDb.confirmed">
+<span class="sig-name descname"><span class="pre">confirmed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#src.auth.schemas.UserDb.confirmed" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserDb.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#src.auth.schemas.UserDb.created_at" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserDb.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">EmailStr</span></em><a class="headerlink" href="#src.auth.schemas.UserDb.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserDb.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#src.auth.schemas.UserDb.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserDb.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.auth.schemas.UserDb.model_computed_fields" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserDb.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True}</span></em><a class="headerlink" href="#src.auth.schemas.UserDb.model_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserDb.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'avatar':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=True),</span> <span class="pre">'confirmed':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=True),</span> <span class="pre">'created_at':</span> <span class="pre">FieldInfo(annotation=datetime,</span> <span class="pre">required=True),</span> <span class="pre">'email':</span> <span class="pre">FieldInfo(annotation=EmailStr,</span> <span class="pre">required=True),</span> <span class="pre">'id':</span> <span class="pre">FieldInfo(annotation=int,</span> <span class="pre">required=True),</span> <span class="pre">'username':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#src.auth.schemas.UserDb.model_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserDb.username">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#src.auth.schemas.UserDb.username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.auth.schemas.UserResponse">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.schemas.</span></span><span class="sig-name descname"><span class="pre">UserResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">detail</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'User</span> <span class="pre">was</span> <span class="pre">successfully</span> <span class="pre">created'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.auth.schemas.UserResponse" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Represents the response model for user-related operations.</p>
+<p>This schema is used for sending responses when a user is successfully created.</p>
+<dl>
+<dt>Args:</dt><dd><p>BaseModel (Pydantic BaseModel): The base class for creating data models.</p>
+</dd>
+<dt>Attributes:</dt><dd><p>user (UserDb): The user data returned as part of the response.
+detail (str): A message indicating the success of the operation.</p>
+<blockquote>
+<div><p>Defaults to “User was successfully created”.</p>
+</div></blockquote>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserResponse.detail">
+<span class="sig-name descname"><span class="pre">detail</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#src.auth.schemas.UserResponse.detail" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserResponse.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.auth.schemas.UserResponse.model_computed_fields" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserResponse.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.auth.schemas.UserResponse.model_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserResponse.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'detail':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='User</span> <span class="pre">was</span> <span class="pre">successfully</span> <span class="pre">created'),</span> <span class="pre">'user':</span> <span class="pre">FieldInfo(annotation=UserDb,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#src.auth.schemas.UserResponse.model_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserResponse.user">
+<span class="sig-name descname"><span class="pre">user</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#src.auth.schemas.UserDb" title="src.auth.schemas.UserDb"><span class="pre">UserDb</span></a></em><a class="headerlink" href="#src.auth.schemas.UserResponse.user" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.auth.schemas.UserScema">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.schemas.</span></span><span class="sig-name descname"><span class="pre">UserScema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MinLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">min_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">5</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">20</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EmailStr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MinLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">min_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">8</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MaxLen</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">25</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.auth.schemas.UserScema" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Represents the schema for creating a new user.</p>
+<p>This schema is used for validating user input during signup.</p>
+<dl>
+<dt>Args:</dt><dd><p>BaseModel (Pydantic BaseModel): The base class for creating data models.</p>
+</dd>
+<dt>Attributes:</dt><dd><dl class="simple">
+<dt>username (str): The username of the user, with a minimum length of 5 and</dt><dd><p>a maximum length of 20 characters.</p>
+</dd>
+</dl>
+<p>email (EmailStr): The user’s email address, validated as a proper email format.
+password (str): The user’s password, with a minimum length of 8 and</p>
+<blockquote>
+<div><p>a maximum length of 25 characters.</p>
+</div></blockquote>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserScema.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">EmailStr</span></em><a class="headerlink" href="#src.auth.schemas.UserScema.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserScema.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.auth.schemas.UserScema.model_computed_fields" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserScema.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.auth.schemas.UserScema.model_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserScema.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'email':</span> <span class="pre">FieldInfo(annotation=EmailStr,</span> <span class="pre">required=True),</span> <span class="pre">'password':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MinLen(min_length=8),</span> <span class="pre">MaxLen(max_length=25)]),</span> <span class="pre">'username':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">metadata=[MinLen(min_length=5),</span> <span class="pre">MaxLen(max_length=20)])}</span></em><a class="headerlink" href="#src.auth.schemas.UserScema.model_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserScema.password">
+<span class="sig-name descname"><span class="pre">password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#src.auth.schemas.UserScema.password" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.schemas.UserScema.username">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#src.auth.schemas.UserScema.username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.auth.auth">
+<span id="authentication-module"></span><h1>Authentication module<a class="headerlink" href="#module-src.auth.auth" title="Link to this heading">¶</a></h1>
+<p>Token operations</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.auth.auth.Auth">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.auth.</span></span><span class="sig-name descname"><span class="pre">Auth</span></span><a class="headerlink" href="#src.auth.auth.Auth" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Authentication and authorization utility class for handling user password
+verification, token generation, and token decoding in a REST API application.</p>
+<p>This class includes methods to hash passwords, verify passwords, create
+access and refresh JWT tokens, decode tokens to extract user information,
+and authenticate the current user based on the token provided.</p>
+<dl>
+<dt>Attributes:</dt><dd><p>pwd_context (CryptContext): Password hashing context using bcrypt.
+SECRET_KEY (str): The secret key used for encoding and decoding JWT tokens.
+ALGORITHM (str): The algorithm used for JWT encoding.
+oauth2_scheme (OAuth2PasswordBearer): Dependency to extract the bearer token</p>
+<blockquote>
+<div><p>from the request for protected routes.</p>
+</div></blockquote>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.auth.Auth.ALGORITHM">
+<span class="sig-name descname"><span class="pre">ALGORITHM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'HS256'</span></em><a class="headerlink" href="#src.auth.auth.Auth.ALGORITHM" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.auth.Auth.SECRET_KEY">
+<span class="sig-name descname"><span class="pre">SECRET_KEY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'secret_key'</span></em><a class="headerlink" href="#src.auth.auth.Auth.SECRET_KEY" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.auth.auth.Auth.create_access_token">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_access_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_delta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#src.auth.auth.Auth.create_access_token" title="Link to this definition">¶</a></dt>
+<dd><p>Create a new JWT access token.</p>
+<dl>
+<dt>Args:</dt><dd><p>data (dict): The data to encode in the token (e.g., user’s email).
+exp_delta (Optional[float], optional): The expiration time in seconds.</p>
+<blockquote>
+<div><p>Defaults to 15 minutes if not provided.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><p>str: The encoded JWT access token as a string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.auth.auth.Auth.create_email_token">
+<span class="sig-name descname"><span class="pre">create_email_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#src.auth.auth.Auth.create_email_token" title="Link to this definition">¶</a></dt>
+<dd><p>_summary_</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (dict): _description_</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.auth.auth.Auth.create_refresh_token">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_refresh_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_delta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#src.auth.auth.Auth.create_refresh_token" title="Link to this definition">¶</a></dt>
+<dd><p>Create a new JWT refresh token.</p>
+<dl>
+<dt>Args:</dt><dd><p>data (dict): The data to encode in the token (e.g., user’s email).
+exp_delta (Optional[float], optional): The expiration time in seconds.</p>
+<blockquote>
+<div><p>Defaults to 7 days if not provided.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><p>str: The encoded JWT refresh token as a string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.auth.auth.Auth.decode_refresh_token">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decode_refresh_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refresh_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#src.auth.auth.Auth.decode_refresh_token" title="Link to this definition">¶</a></dt>
+<dd><p>Decode a refresh token and extract the user’s email.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>refresh_token (str): The refresh token to decode.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the token scope is invalid or if the token cannot be decoded.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The email of the user extracted from the token.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.auth.auth.Auth.get_current_user">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_current_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(OAuth2PasswordBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.auth.models.User" title="src.auth.models.User"><span class="pre">User</span></a></span></span><a class="headerlink" href="#src.auth.auth.Auth.get_current_user" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve the current authenticated user based on the provided access token.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>token (str, optional): The access token extracted from the request.</dt><dd><p>Defaults to Depends(oauth2_scheme).</p>
+</dd>
+</dl>
+<p>db (Session, optional): The database session. Defaults to Depends(get_db).</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the token is invalid, expired, or the user cannot be found.</p>
+</dd>
+<dt>Returns:</dt><dd><p>User: The user object associated with the token.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.auth.auth.Auth.get_email_from_token">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_email_from_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.auth.auth.Auth.get_email_from_token" title="Link to this definition">¶</a></dt>
+<dd><p>_summary_</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token (str): _description_</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: _description_</p>
+</dd>
+<dt>Returns:</dt><dd><p>_type_: _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.auth.auth.Auth.get_password_hash">
+<span class="sig-name descname"><span class="pre">get_password_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#src.auth.auth.Auth.get_password_hash" title="Link to this definition">¶</a></dt>
+<dd><p>Hash a plain text password using bcrypt.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>password (str): The plain text password to hash.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The hashed version of the password.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.auth.Auth.oauth2_scheme">
+<span class="sig-name descname"><span class="pre">oauth2_scheme</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;fastapi.security.oauth2.OAuth2PasswordBearer</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#src.auth.auth.Auth.oauth2_scheme" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.auth.auth.Auth.pwd_context">
+<span class="sig-name descname"><span class="pre">pwd_context</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;CryptContext&gt;</span></em><a class="headerlink" href="#src.auth.auth.Auth.pwd_context" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.auth.auth.Auth.verify_password">
+<span class="sig-name descname"><span class="pre">verify_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plain_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hashed_password</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#src.auth.auth.Auth.verify_password" title="Link to this definition">¶</a></dt>
+<dd><p>Verify a plain password against a hashed password.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>plain_password (str): The plain text password provided by the user.
+hashed_password (str): The hashed password stored in the database.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the plain password matches the hashed password, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.auth.crud">
+<span id="authentication-crud-ops"></span><h1>Authentication CRUD ops<a class="headerlink" href="#module-src.auth.crud" title="Link to this heading">¶</a></h1>
+<p>CRUD operations</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.auth.crud.confirmed_check_toggle">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.crud.</span></span><span class="sig-name descname"><span class="pre">confirmed_check_toggle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#src.auth.crud.confirmed_check_toggle" title="Link to this definition">¶</a></dt>
+<dd><p>Toggle the email confirmation status of a user.</p>
+<p>This function retrieves a user by their email and marks their account as confirmed by
+setting the <cite>confirmed</cite> attribute to <cite>True</cite>. The changes are then committed to the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>email (str): The email of the user whose confirmation status will be toggled.
+db (Session): The database session used to retrieve and update the user’s record.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.auth.crud.create_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.crud.</span></span><span class="sig-name descname"><span class="pre">create_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.schemas.UserScema" title="src.auth.schemas.UserScema"><span class="pre">UserScema</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.auth.models.User" title="src.auth.models.User"><span class="pre">User</span></a></span></span><a class="headerlink" href="#src.auth.crud.create_user" title="Link to this definition">¶</a></dt>
+<dd><p>Create a new user in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>body (UserScema): The schema containing user information such as email, password, etc.
+db (Session): The database session used to add the new user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>User: The newly created user object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.auth.crud.get_user_by_email">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.crud.</span></span><span class="sig-name descname"><span class="pre">get_user_by_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.auth.models.User" title="src.auth.models.User"><span class="pre">User</span></a></span></span><a class="headerlink" href="#src.auth.crud.get_user_by_email" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve a user from the database by their email address.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>email (str): The email address of the user to retrieve.
+db (Session): The database session used for querying the user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>User: The user object if found, otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.auth.crud.update_avatar">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.crud.</span></span><span class="sig-name descname"><span class="pre">update_avatar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.auth.models.User" title="src.auth.models.User"><span class="pre">User</span></a></span></span><a class="headerlink" href="#src.auth.crud.update_avatar" title="Link to this definition">¶</a></dt>
+<dd><p>Update the avatar URL for a specific user.</p>
+<p>This function retrieves a user by their email, updates their avatar URL,
+and commits the change to the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>email (str): The email of the user whose avatar is being updated.
+url (str): The new avatar URL to be saved to the user’s profile.
+db (Session): The database session used to retrieve and update the user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>User: The updated user object with the new avatar URL.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.auth.crud.update_token">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.crud.</span></span><span class="sig-name descname"><span class="pre">update_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.auth.models.User" title="src.auth.models.User"><span class="pre">User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#src.auth.crud.update_token" title="Link to this definition">¶</a></dt>
+<dd><p>Update the refresh token of a user in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user (User): The user object whose refresh token needs to be updated.
+token (str | None): The new refresh token to set for the user. Pass None to clear the token.
+db (Session): The database session used to update the user’s token.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.auth.mail">
+<span id="authentication-email"></span><h1>Authentication Email<a class="headerlink" href="#module-src.auth.mail" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.auth.mail.send_email">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.auth.mail.</span></span><span class="sig-name descname"><span class="pre">send_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EmailStr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#src.auth.mail.send_email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="#">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">ContactsApp documentation</a></li>
+<li><a class="reference internal" href="#rest-api-main">REST API main</a></li>
+<li><a class="reference internal" href="#module-src.database">REST API database</a><ul>
+<li><a class="reference internal" href="#src.database.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.contacts.router">Contacts Router</a><ul>
+<li><a class="reference internal" href="#src.contacts.router.create_contact"><code class="docutils literal notranslate"><span class="pre">create_contact()</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.router.delete_contact"><code class="docutils literal notranslate"><span class="pre">delete_contact()</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.router.read_contact"><code class="docutils literal notranslate"><span class="pre">read_contact()</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.router.read_contacts"><code class="docutils literal notranslate"><span class="pre">read_contacts()</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.router.search_contacts"><code class="docutils literal notranslate"><span class="pre">search_contacts()</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.router.upcoming_birthdays"><code class="docutils literal notranslate"><span class="pre">upcoming_birthdays()</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.router.update_contact"><code class="docutils literal notranslate"><span class="pre">update_contact()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.contacts.models">Contacts Models</a><ul>
+<li><a class="reference internal" href="#src.contacts.models.Contact"><code class="docutils literal notranslate"><span class="pre">Contact</span></code></a><ul>
+<li><a class="reference internal" href="#src.contacts.models.Contact.birthday"><code class="docutils literal notranslate"><span class="pre">Contact.birthday</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.models.Contact.email"><code class="docutils literal notranslate"><span class="pre">Contact.email</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.models.Contact.first_name"><code class="docutils literal notranslate"><span class="pre">Contact.first_name</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.models.Contact.id"><code class="docutils literal notranslate"><span class="pre">Contact.id</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.models.Contact.last_name"><code class="docutils literal notranslate"><span class="pre">Contact.last_name</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.models.Contact.other_info"><code class="docutils literal notranslate"><span class="pre">Contact.other_info</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.models.Contact.phone_number"><code class="docutils literal notranslate"><span class="pre">Contact.phone_number</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.models.Contact.user"><code class="docutils literal notranslate"><span class="pre">Contact.user</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.models.Contact.user_id"><code class="docutils literal notranslate"><span class="pre">Contact.user_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.contacts.schemas">Contacts Schemas</a><ul>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactBasic"><code class="docutils literal notranslate"><span class="pre">ContactBasic</span></code></a><ul>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactBasic.birthday"><code class="docutils literal notranslate"><span class="pre">ContactBasic.birthday</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactBasic.email"><code class="docutils literal notranslate"><span class="pre">ContactBasic.email</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactBasic.first_name"><code class="docutils literal notranslate"><span class="pre">ContactBasic.first_name</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactBasic.last_name"><code class="docutils literal notranslate"><span class="pre">ContactBasic.last_name</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactBasic.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ContactBasic.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactBasic.model_config"><code class="docutils literal notranslate"><span class="pre">ContactBasic.model_config</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactBasic.model_fields"><code class="docutils literal notranslate"><span class="pre">ContactBasic.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactBasic.other_info"><code class="docutils literal notranslate"><span class="pre">ContactBasic.other_info</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactBasic.phone_number"><code class="docutils literal notranslate"><span class="pre">ContactBasic.phone_number</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactCreation"><code class="docutils literal notranslate"><span class="pre">ContactCreation</span></code></a><ul>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactCreation.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ContactCreation.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactCreation.model_config"><code class="docutils literal notranslate"><span class="pre">ContactCreation.model_config</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactCreation.model_fields"><code class="docutils literal notranslate"><span class="pre">ContactCreation.model_fields</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactScema"><code class="docutils literal notranslate"><span class="pre">ContactScema</span></code></a><ul>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactScema.Config"><code class="docutils literal notranslate"><span class="pre">ContactScema.Config</span></code></a><ul>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactScema.Config.from_attributes"><code class="docutils literal notranslate"><span class="pre">ContactScema.Config.from_attributes</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactScema.id"><code class="docutils literal notranslate"><span class="pre">ContactScema.id</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactScema.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ContactScema.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactScema.model_config"><code class="docutils literal notranslate"><span class="pre">ContactScema.model_config</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.schemas.ContactScema.model_fields"><code class="docutils literal notranslate"><span class="pre">ContactScema.model_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.contacts.crud">Contacts CRUD operations</a><ul>
+<li><a class="reference internal" href="#src.contacts.crud.CrudOps"><code class="docutils literal notranslate"><span class="pre">CrudOps</span></code></a><ul>
+<li><a class="reference internal" href="#src.contacts.crud.CrudOps.create_contact"><code class="docutils literal notranslate"><span class="pre">CrudOps.create_contact()</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.crud.CrudOps.delete_contact"><code class="docutils literal notranslate"><span class="pre">CrudOps.delete_contact()</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.crud.CrudOps.get_all_contacts"><code class="docutils literal notranslate"><span class="pre">CrudOps.get_all_contacts()</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.crud.CrudOps.get_contact"><code class="docutils literal notranslate"><span class="pre">CrudOps.get_contact()</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.crud.CrudOps.get_upcoming_birthdays"><code class="docutils literal notranslate"><span class="pre">CrudOps.get_upcoming_birthdays()</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.crud.CrudOps.search_contacts"><code class="docutils literal notranslate"><span class="pre">CrudOps.search_contacts()</span></code></a></li>
+<li><a class="reference internal" href="#src.contacts.crud.CrudOps.update_contact"><code class="docutils literal notranslate"><span class="pre">CrudOps.update_contact()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.auth.router">Authentication Router</a><ul>
+<li><a class="reference internal" href="#src.auth.router.confirmed_email"><code class="docutils literal notranslate"><span class="pre">confirmed_email()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.router.login"><code class="docutils literal notranslate"><span class="pre">login()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.router.read_users_me"><code class="docutils literal notranslate"><span class="pre">read_users_me()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.router.refresh_token"><code class="docutils literal notranslate"><span class="pre">refresh_token()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.router.request_email"><code class="docutils literal notranslate"><span class="pre">request_email()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.router.signup"><code class="docutils literal notranslate"><span class="pre">signup()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.router.update_avatar_user"><code class="docutils literal notranslate"><span class="pre">update_avatar_user()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.auth.models">Authentication Models</a><ul>
+<li><a class="reference internal" href="#src.auth.models.User"><code class="docutils literal notranslate"><span class="pre">User</span></code></a><ul>
+<li><a class="reference internal" href="#src.auth.models.User.avatar"><code class="docutils literal notranslate"><span class="pre">User.avatar</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.models.User.confirmed"><code class="docutils literal notranslate"><span class="pre">User.confirmed</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.models.User.created_at"><code class="docutils literal notranslate"><span class="pre">User.created_at</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.models.User.email"><code class="docutils literal notranslate"><span class="pre">User.email</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.models.User.id"><code class="docutils literal notranslate"><span class="pre">User.id</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.models.User.password"><code class="docutils literal notranslate"><span class="pre">User.password</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.models.User.refresh_token"><code class="docutils literal notranslate"><span class="pre">User.refresh_token</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.models.User.username"><code class="docutils literal notranslate"><span class="pre">User.username</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.auth.schemas">Authentication Schemas</a><ul>
+<li><a class="reference internal" href="#src.auth.schemas.RequestEmail"><code class="docutils literal notranslate"><span class="pre">RequestEmail</span></code></a><ul>
+<li><a class="reference internal" href="#src.auth.schemas.RequestEmail.email"><code class="docutils literal notranslate"><span class="pre">RequestEmail.email</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.RequestEmail.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">RequestEmail.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.RequestEmail.model_config"><code class="docutils literal notranslate"><span class="pre">RequestEmail.model_config</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.RequestEmail.model_fields"><code class="docutils literal notranslate"><span class="pre">RequestEmail.model_fields</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#src.auth.schemas.TokenModel"><code class="docutils literal notranslate"><span class="pre">TokenModel</span></code></a><ul>
+<li><a class="reference internal" href="#src.auth.schemas.TokenModel.access_token"><code class="docutils literal notranslate"><span class="pre">TokenModel.access_token</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.TokenModel.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">TokenModel.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.TokenModel.model_config"><code class="docutils literal notranslate"><span class="pre">TokenModel.model_config</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.TokenModel.model_fields"><code class="docutils literal notranslate"><span class="pre">TokenModel.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.TokenModel.refresh_token"><code class="docutils literal notranslate"><span class="pre">TokenModel.refresh_token</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.TokenModel.token_type"><code class="docutils literal notranslate"><span class="pre">TokenModel.token_type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#src.auth.schemas.UserDb"><code class="docutils literal notranslate"><span class="pre">UserDb</span></code></a><ul>
+<li><a class="reference internal" href="#src.auth.schemas.UserDb.Config"><code class="docutils literal notranslate"><span class="pre">UserDb.Config</span></code></a><ul>
+<li><a class="reference internal" href="#src.auth.schemas.UserDb.Config.from_attributes"><code class="docutils literal notranslate"><span class="pre">UserDb.Config.from_attributes</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#src.auth.schemas.UserDb.avatar"><code class="docutils literal notranslate"><span class="pre">UserDb.avatar</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserDb.confirmed"><code class="docutils literal notranslate"><span class="pre">UserDb.confirmed</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserDb.created_at"><code class="docutils literal notranslate"><span class="pre">UserDb.created_at</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserDb.email"><code class="docutils literal notranslate"><span class="pre">UserDb.email</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserDb.id"><code class="docutils literal notranslate"><span class="pre">UserDb.id</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserDb.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">UserDb.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserDb.model_config"><code class="docutils literal notranslate"><span class="pre">UserDb.model_config</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserDb.model_fields"><code class="docutils literal notranslate"><span class="pre">UserDb.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserDb.username"><code class="docutils literal notranslate"><span class="pre">UserDb.username</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#src.auth.schemas.UserResponse"><code class="docutils literal notranslate"><span class="pre">UserResponse</span></code></a><ul>
+<li><a class="reference internal" href="#src.auth.schemas.UserResponse.detail"><code class="docutils literal notranslate"><span class="pre">UserResponse.detail</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserResponse.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">UserResponse.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserResponse.model_config"><code class="docutils literal notranslate"><span class="pre">UserResponse.model_config</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserResponse.model_fields"><code class="docutils literal notranslate"><span class="pre">UserResponse.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserResponse.user"><code class="docutils literal notranslate"><span class="pre">UserResponse.user</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#src.auth.schemas.UserScema"><code class="docutils literal notranslate"><span class="pre">UserScema</span></code></a><ul>
+<li><a class="reference internal" href="#src.auth.schemas.UserScema.email"><code class="docutils literal notranslate"><span class="pre">UserScema.email</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserScema.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">UserScema.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserScema.model_config"><code class="docutils literal notranslate"><span class="pre">UserScema.model_config</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserScema.model_fields"><code class="docutils literal notranslate"><span class="pre">UserScema.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserScema.password"><code class="docutils literal notranslate"><span class="pre">UserScema.password</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.schemas.UserScema.username"><code class="docutils literal notranslate"><span class="pre">UserScema.username</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.auth.auth">Authentication module</a><ul>
+<li><a class="reference internal" href="#src.auth.auth.Auth"><code class="docutils literal notranslate"><span class="pre">Auth</span></code></a><ul>
+<li><a class="reference internal" href="#src.auth.auth.Auth.ALGORITHM"><code class="docutils literal notranslate"><span class="pre">Auth.ALGORITHM</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.auth.Auth.SECRET_KEY"><code class="docutils literal notranslate"><span class="pre">Auth.SECRET_KEY</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.auth.Auth.create_access_token"><code class="docutils literal notranslate"><span class="pre">Auth.create_access_token()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.auth.Auth.create_email_token"><code class="docutils literal notranslate"><span class="pre">Auth.create_email_token()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.auth.Auth.create_refresh_token"><code class="docutils literal notranslate"><span class="pre">Auth.create_refresh_token()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.auth.Auth.decode_refresh_token"><code class="docutils literal notranslate"><span class="pre">Auth.decode_refresh_token()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.auth.Auth.get_current_user"><code class="docutils literal notranslate"><span class="pre">Auth.get_current_user()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.auth.Auth.get_email_from_token"><code class="docutils literal notranslate"><span class="pre">Auth.get_email_from_token()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.auth.Auth.get_password_hash"><code class="docutils literal notranslate"><span class="pre">Auth.get_password_hash()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.auth.Auth.oauth2_scheme"><code class="docutils literal notranslate"><span class="pre">Auth.oauth2_scheme</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.auth.Auth.pwd_context"><code class="docutils literal notranslate"><span class="pre">Auth.pwd_context</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.auth.Auth.verify_password"><code class="docutils literal notranslate"><span class="pre">Auth.verify_password()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.auth.crud">Authentication CRUD ops</a><ul>
+<li><a class="reference internal" href="#src.auth.crud.confirmed_check_toggle"><code class="docutils literal notranslate"><span class="pre">confirmed_check_toggle()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.crud.create_user"><code class="docutils literal notranslate"><span class="pre">create_user()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.crud.get_user_by_email"><code class="docutils literal notranslate"><span class="pre">get_user_by_email()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.crud.update_avatar"><code class="docutils literal notranslate"><span class="pre">update_avatar()</span></code></a></li>
+<li><a class="reference internal" href="#src.auth.crud.update_token"><code class="docutils literal notranslate"><span class="pre">update_token()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-src.auth.mail">Authentication Email</a><ul>
+<li><a class="reference internal" href="#src.auth.mail.send_email"><code class="docutils literal notranslate"><span class="pre">send_email()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">ContactsApp 0.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ContactsApp documentation</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Yevhenii Baranov.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    </div>
+  </body>
+</html>
