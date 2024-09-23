@@ -11,7 +11,7 @@ app_port = int(os.getenv("APP_PORT"))
 
 if __name__ == "__main__":
     uvicorn.run(
-        app="src.main:app",
+        app="src.app_main:app",
         host=app_host,
         port=app_port
     )
