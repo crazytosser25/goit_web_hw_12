@@ -20,7 +20,7 @@ models.Base.metadata.create_all(bind=engine)
 r = None  # pylint: disable=C0103
 
 @asynccontextmanager
-async def lifespan(app: FastAPI): # pylint: disable=W0613, W0621
+async def lifespan(app: FastAPI):  # pylint: disable=W0613, W0621
     """Define the lifespan of the FastAPI application.
 
     This function manages the lifecycle of the FastAPI application, initializing and closing

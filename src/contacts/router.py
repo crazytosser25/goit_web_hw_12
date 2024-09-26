@@ -47,7 +47,7 @@ def create_contact(
         schemas.Contact: The newly created contact with all the details
             including the assigned ID.
     """
-    result =  CrudOps.create_contact(
+    result = CrudOps.create_contact(
         base=db,
         contact=contact,
         user=user

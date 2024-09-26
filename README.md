@@ -1,5 +1,5 @@
 # goit_web_hw_12
-Homework 12-13 FastAPI + Authorization + Email
+Homework 12-14 FastAPI + Authorization + Email + Docs
 
   1.  Дані доступу до БД, а також зовнішні хост і порт застосунку та інше
       повинні бути прописані у файлі .env згідно зразку example.env.
@@ -20,3 +20,7 @@ Homework 12-13 FastAPI + Authorization + Email
       ```
       python start.py
       ```
+Документація, згенерована задопомогою sphinx, додана у папці /docs.
+У папці /docs_src робочі файли геренації документації.
+
+Тести запускаються в Pycharm. Для запуску необхідно лмінити лінк до БД.

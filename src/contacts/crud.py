@@ -1,6 +1,7 @@
 """CRUD operations"""
+import calendar
 from datetime import datetime, timedelta
-from typing import List
+from typing import List, Type, Any
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 
@@ -49,7 +50,7 @@ class CrudOps:
         base: Session,
         id_: int,
         user: UserDb
-    ) -> models.Contact:
+    ) -> Type[models.Contact] | None:
         """Retrieves a contact from the database by its ID.
 
         This function queries the database to find and return the contact with the
@@ -74,7 +75,7 @@ class CrudOps:
     def get_all_contacts(
         base: Session,
         user: UserDb
-    ) -> List[models.Contact]:
+    ) -> list[Type[models.Contact]]:
         """Retrieves all contacts from the database.
 
         This function queries the database to retrieve and return a list of all
@@ -99,7 +100,7 @@ class CrudOps:
         base: Session,
         query: str,
         user: UserDb
-    ) -> List[models.Contact]:
+    ) -> list[Type[models.Contact]]:
         """Searches for contacts that match the given query string.
 
         This function searches for contacts where the query string matches any
@@ -133,7 +134,7 @@ class CrudOps:
     def get_upcoming_birthdays(
         base: Session,
         user: UserDb
-    ) -> List[models.Contact]:
+    ) -> list[Type[models.Contact]] | list[Any]:
         """Retrieves contacts with birthdays occurring in the next 7 days.
 
         This function searches through all contacts in the database to find those whose
@@ -166,18 +167,28 @@ class CrudOps:
         for contact in contacts:
             birth_date = contact.birthday
             try:
-                birthday_this_year = birth_date.replace(year=today.year)
+                if birth_date.month == 2 and birth_date.day == 29:
+                    if not calendar.isleap(today.year):
+                        birthday_this_year = birth_date.replace(year=today.year, day=28)
+                    else:
+                        birthday_this_year = birth_date.replace(year=today.year)
+                else:
+                    birthday_this_year = birth_date.replace(year=today.year)
+
                 if birthday_this_year < today:
-                    birthday_this_year = birth_date.replace(year=today.year+1)
+                    if birth_date.month == 2 and birth_date.day == 29 and not calendar.isleap(today.year + 1):
+                        birthday_this_year = birth_date.replace(year=today.year + 1, day=28)
+                    else:
+                        birthday_this_year = birth_date.replace(year=today.year + 1)
+
             except TypeError:
                 continue
 
             if 0 <= (birthday_this_year - today).days <= days:
-                if birthday_this_year.weekday() >= 5:
-                    days_ahead = 0 - birthday_this_year.weekday()
-                    if days_ahead <= 0:
-                        days_ahead += 7
-                    birthday_this_year += timedelta(days=days_ahead)
+                if birthday_this_year.weekday() < 5:  # Weekday
+                    days_until_weekend = 5 - birthday_this_year.weekday()
+                    birthday_this_year += timedelta(days=days_until_weekend)
+
                 contact.birthday = birthday_this_year
                 result.append(contact)
         if result:
@@ -190,7 +201,7 @@ class CrudOps:
         id_: int,
         contact: schemas.ContactCreation,
         user: UserDb
-    ) -> models.Contact:
+    ) -> Type[models.Contact] | None:
         """Updates an existing contact in the database with new data.
 
         This function locates a contact by its ID and updates its attributes with the data
@@ -229,7 +240,7 @@ class CrudOps:
         base: Session,
         id_: int,
         user: UserDb
-    ) -> models.Contact:
+    ) -> Type[models.Contact] | None:
         """Deletes a contact from the database by its ID.
 
         This function locates a contact using the provided ID and removes it from the
